@@ -3,7 +3,7 @@
 ## Project Information
 - **Project Type**: Greenfield
 - **Start Date**: 2026-04-30T00:00:00Z
-- **Current Stage**: INCEPTION - Application Design
+- **Current Stage**: INCEPTION - 完了（Construction Phase は別セッション）
 
 ## Workspace State
 - **Existing Code**: No
@@ -22,8 +22,8 @@
 - [x] 要件分析 (Requirements Analysis) — 完了
 - [x] ユーザーストーリー (User Stories) — 完了（13ストーリー生成）
 - [x] ワークフロープランニング (Workflow Planning) — 完了
-- [ ] アプリケーション設計 (Application Design) — EXECUTE
-- [ ] ユニット生成 (Units Generation) — EXECUTE
+- [x] アプリケーション設計 (Application Design) — 完了（4ユニット設計完了）
+- [x] ユニット生成 (Units Generation) — 完了（4ユニット、13ストーリーマッピング完了）
 
 ### コンストラクション・フェーズ (CONSTRUCTION PHASE)
 - [ ] 未開始

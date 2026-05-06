@@ -85,3 +85,67 @@
 **Context**: INCEPTION フェーズ、ユーザーストーリー 完了 → アプリケーション設計へ承認待ち
 
 ---
+
+## ユーザーストーリー (User Stories) — ユーザー承認
+**Timestamp**: 2026-05-06T00:20:00Z
+**User Input**: "ユーザーストーリーいいと思います。次をお願いします。"
+**AI Response**: ユーザーストーリー承認を記録。Application Design ステージを開始。
+**Context**: INCEPTION フェーズ、ユーザーストーリー 承認完了 → アプリケーション設計 開始
+
+---
+
+## アプリケーション設計 (Application Design) — プランニング開始
+**Timestamp**: 2026-05-06T00:21:00Z
+**User Input**: N/A（自動移行）
+**AI Response**: Application Designルールを読み込み。設計計画質問ファイル `application-design-plan.md` を作成（8問）。バックエンドアーキテクチャ・AI配置・ランタイム・画像アップロード・モバイル状態管理・APIクライアント・ナビゲーション・DBアクセス層について確認。
+**Context**: INCEPTION フェーズ、アプリケーション設計 — ユーザー回答待ち
+
+---
+
+## ユニット生成 (Units Generation) — 回答受領・生成完了
+**Timestamp**: 2026-05-06T00:45:00Z
+**User Input**: "完了しました。" （全5問: Q1=A(モノレポ), Q2=A(Backend→AI→Mobile→Infra), Q3=A(Mobile主担当), Q4=A(shared package), Q5=A(AWS CDK)）
+**AI Response**: 矛盾・曖昧さなし。unit-of-work.md（4ユニット定義・モノレポ構造）, unit-of-work-dependency.md（依存マトリクス・フェーズ別開発手順）, unit-of-work-story-map.md（全13ストーリー×4ユニット対応表）を生成。全ストーリーの割当を確認（13/13）。`aidlc-state.md` を INCEPTION完了に更新。
+**Context**: INCEPTION フェーズ、ユニット生成 完了 → INCEPTION PHASE 全完了 → Construction Phase承認待ち
+
+---
+
+## ユニット生成 (Units Generation) — パート1 プランニング開始
+**Timestamp**: 2026-05-06T00:36:00Z
+**User Input**: N/A（自動移行）
+**AI Response**: `unit-of-work-plan.md` を作成（5問）。リポジトリ戦略・開発順序・クロスカッティングストーリーの主担当・共有型定義・IaC戦略について確認。
+**Context**: INCEPTION フェーズ、ユニット生成 パート1 プランニング — ユーザー回答待ち
+
+---
+
+## UI Mockおよびコンテキストマッピング作成
+**Timestamp**: 2026-05-06T01:30:00Z
+**User Input**: "mockとコンテキストマッピングを作るかどうかの話に戻りますが、UI/UXの確認だけしたいのでネイティブアプリを想定して、htmlでmockの作成とunit間やユーザーストーリーの関係性を示すコンテキストマッピングを作成してください。"
+**AI Response**: `aidlc-docs/inception/mocks/ui-mock.html`（4フォン・7画面・インタラクティブHTML）と `aidlc-docs/inception/application-design/context-mapping.md`（DDDバウンデッドコンテキスト図・関係マトリクス・US対応表・禁止事項）を生成。
+**Context**: INCEPTION フェーズ、追加成果物（UIモック + コンテキストマッピング）生成完了
+
+---
+
+## フィーチャーユニット再設計 — ファイル統合・ユニット定義変更
+**Timestamp**: 2026-05-06T01:00:00Z
+**User Input**: "１つ目について 重複しているので、unit-of-work, unit-of-work-story-map, unit-of-work-dependencyにcomponents, components-methods,components-dependencyを集約させてください。AIDLCに合わせてunit-of-workの方に寄せたいです。 2つ目について 機能単位というより「フィーチャー単位」に再定義してください。フィーチャー単位とは、ストーリーの論理的グループ化です。つまり、作成した複数のユーザーストーリーを互いに影響しない独立したグループに分割して欲しいということです。これこそがunit of workだと思っています。"
+**AI Response**: 以下を実行: (1) components.md + component-methods.md → unit-of-work.md に統合。(2) component-dependency.md → unit-of-work-dependency.md に統合。(3) unit-of-work-story-map.md を再整理。(4) ユニット定義をテクノロジー単位（Backend API / AI Service / Mobile App / AWS Infra）からフィーチャー単位に変更: Unit 1: 認証（US-01〜03）/ Unit 2: Capture & Refactor（US-04〜07）/ Unit 3: Social Feed（US-08〜11）/ Unit 4: My Page（US-12〜13）。旧ファイル（components.md, component-methods.md, component-dependency.md）を削除。
+**Context**: INCEPTION フェーズ、ユニット生成 完了（フィーチャーユニット再定義） → INCEPTION PHASE 全完了
+
+---
+
+## アプリケーション設計 (Application Design) — ユーザー承認
+**Timestamp**: 2026-05-06T00:35:00Z
+**User Input**: "あれ、Unitって複数のユーザーストーリーを依存関係の内容にまとめた単位かと思ってたんだけど違う？AI-DLC的にどうなの？" → "いえ、今のままでUnits Generationに進んでください。"
+**AI Response**: AI-DLC的なUnit定義（開発・デプロイ単位でのストーリー論理グループ化）を説明。ユニット定義（Backend API / AI Service / Mobile App / AWS Infra）はマイクロサービス構成として適切と確認。ユーザーが現行定義のまま進むことを承認。
+**Context**: INCEPTION フェーズ、アプリケーション設計 承認完了 → ユニット生成 開始
+
+---
+
+## アプリケーション設計 (Application Design) — 回答受領・設計完了
+**Timestamp**: 2026-05-06T00:30:00Z
+**User Input**: "完了しました！" （全8問回答: Q1=D(DDD Domain/Usecase/Repository/Presenter), Q2=C(AI独立ECS), Q3=B(ECS Fargate), Q4=A(Presigned URL), Q5=A(Zustand), Q6=A(Axios), Q7=A(React Navigation), Q8=A(Prisma)）
+**AI Response**: 矛盾・曖昧さなし。設計成果物を生成: components.md（4ユニット×DDDレイヤー全コンポーネント）, component-methods.md（TypeScriptシグネチャ）, services.md（6サービスフロー）, component-dependency.md（依存関係マトリクス・データフロー図）, application-design.md（Mermaidシステム図・統合概要）。`aidlc-state.md` を Units Generation に更新。
+**Context**: INCEPTION フェーズ、アプリケーション設計 完了 → ユニット生成へ承認待ち
+
+---
