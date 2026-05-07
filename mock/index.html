@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sloth Feed — Mock</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F7F4EE;
+      --card:      #FFFFFF;
+      --primary:   #7C6CF5;
+      --primary-lt:#EDE9FD;
+      --ai-bg:     #F0FAF4;
+      --ai-border: #A8DDB8;
+      --ai-text:   #2D6A45;
+      --reject-bg: #FEF3F0;
+      --reject-bd: #F5BFB0;
+      --reject-tx: #B5432A;
+      --text:      #2C2C2C;
+      --muted:     #888888;
+      --border:    #E8E4DC;
+      --nav-h:     60px;
+    }
+
+    body {
+      background: #DDD8CF;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 24px 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+    }
+
+    /* ── モバイルフレーム ── */
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      background: var(--bg);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── 画面 ── */
+    .screen {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+    .screen.active { display: flex; }
+
+    /* ── トップバー ── */
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .topbar-logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--primary);
+    }
+    .topbar-logo span { color: var(--text); font-weight: 400; font-size: 13px; margin-left: 6px; }
+    .topbar-action {
+      background: none; border: none; cursor: pointer;
+      color: var(--primary); font-size: 14px; font-weight: 600;
+    }
+
+    /* ── スクロールエリア ── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: calc(var(--nav-h) + 12px);
+    }
+    .scroll-area::-webkit-scrollbar { width: 0; }
+
+    /* ── ボトムナビ ── */
+    .bottom-nav {
+      height: var(--nav-h);
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-shrink: 0;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 3px; cursor: pointer; border: none; background: none;
+      color: var(--muted); font-size: 11px; font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-item.active { color: var(--primary); }
+    .nav-item svg { width: 22px; height: 22px; }
+
+    /* ── 投稿カード ── */
+    .post-card {
+      background: var(--card);
+      margin: 10px 14px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .post-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .post-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--primary-lt);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; margin-right: 9px; flex-shrink: 0;
+    }
+    .post-meta { flex: 1; }
+    .post-author { font-size: 13px; font-weight: 600; color: var(--text); }
+    .post-time { font-size: 11px; color: var(--muted); }
+    .post-content {
+      font-size: 15px; line-height: 1.6; color: var(--text);
+      margin-bottom: 12px;
+    }
+    .post-prefix { color: var(--muted); font-size: 13px; }
+
+    /* ── AI コメントバブル ── */
+    .ai-bubble {
+      background: var(--ai-bg);
+      border: 1px solid var(--ai-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .ai-label {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; color: var(--ai-text);
+      letter-spacing: 0.3px; margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .ai-label-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--ai-text); flex-shrink: 0;
+    }
+    .ai-text { font-size: 13px; line-height: 1.65; color: #1D4731; }
+
+    /* ── フォーム系 ── */
+    .form-wrap {
+      padding: 32px 24px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .form-title { font-size: 24px; font-weight: 800; color: var(--text); }
+    .form-subtitle { font-size: 14px; color: var(--muted); margin-top: -12px; line-height: 1.5; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .field input, .field textarea {
+      border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 15px; color: var(--text);
+      background: var(--card); outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--primary); }
+    .field textarea { resize: none; line-height: 1.6; }
+
+    .btn-primary {
+      background: var(--primary); color: white;
+      border: none; border-radius: 12px; padding: 14px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.5; cursor: default; }
+    .btn-secondary {
+      background: var(--primary-lt); color: var(--primary);
+      border: none; border-radius: 12px; padding: 14px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      font-family: inherit;
+    }
+    .link-row {
+      text-align: center; font-size: 14px; color: var(--muted);
+    }
+    .link-row a { color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+    /* ── 認証ロゴエリア ── */
+    .auth-logo {
+      text-align: center; padding: 40px 24px 8px;
+    }
+    .auth-logo-mark {
+      font-size: 42px; margin-bottom: 8px;
+    }
+    .auth-logo-name {
+      font-size: 26px; font-weight: 800; color: var(--primary);
+    }
+    .auth-logo-tagline {
+      font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5;
+    }
+
+    /* ── 投稿フォーム画面 ── */
+    .post-screen-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+    .post-screen-title { font-size: 17px; font-weight: 700; color: var(--text); }
+    .char-count { font-size: 12px; color: var(--muted); margin-left: auto; }
+    .post-hint {
+      margin: 0 14px 0;
+      background: var(--primary-lt);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 13px; color: var(--primary); line-height: 1.5;
+    }
+    .post-hint strong { font-weight: 700; }
+
+    /* ── 処理中オーバーレイ ── */
+    .loading-overlay {
+      display: none;
+      position: absolute; inset: 0; z-index: 100;
+      background: rgba(247,244,238,0.92);
+      flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+    }
+    .loading-overlay.show { display: flex; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-label { font-size: 15px; color: var(--muted); font-weight: 500; }
+    .loading-sub { font-size: 13px; color: var(--muted); opacity: 0.7; }
+
+    /* ── フィルタリング除外バナー ── */
+    .reject-banner {
+      display: none;
+      margin: 12px 14px;
+      background: var(--reject-bg);
+      border: 1px solid var(--reject-bd);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .reject-banner.show { display: block; }
+    .reject-title {
+      font-size: 14px; font-weight: 700; color: var(--reject-tx);
+      margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .reject-text { font-size: 13px; color: #8B3620; line-height: 1.6; }
+    .reject-retry {
+      margin-top: 12px; width: 100%;
+      background: white; color: var(--reject-tx);
+      border: 1.5px solid var(--reject-bd);
+      border-radius: 10px; padding: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ── 通過後の成功パネル ── */
+    .success-panel {
+      display: none;
+      margin: 12px 14px;
+    }
+    .success-panel.show { display: block; }
+    .success-post-preview {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      margin-bottom: 10px;
+    }
+    .success-tag {
+      font-size: 11px; font-weight: 700; color: var(--primary);
+      text-transform: uppercase; letter-spacing: 0.4px;
+      margin-bottom: 8px;
+    }
+    .success-content { font-size: 15px; color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+    .success-btn {
+      width: 100%; margin-top: 10px;
+      background: var(--primary); color: white;
+      border: none; border-radius: 12px; padding: 13px;
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+
+    /* ── マイ投稿 ── */
+    .section-label {
+      padding: 16px 18px 6px;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+
+    /* ── 空フィード ── */
+    .empty-state {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 60px 30px; gap: 12px; text-align: center;
+    }
+    .empty-icon { font-size: 48px; }
+    .empty-text { font-size: 16px; font-weight: 600; color: var(--text); }
+    .empty-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── タブ ── */
+    .screen-selector {
+      position: fixed; bottom: 12px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(44,44,44,0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 20px; padding: 8px 12px;
+      display: flex; gap: 6px; z-index: 999;
+    }
+    .sel-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.55); font-size: 11px;
+      padding: 4px 10px; border-radius: 12px;
+      font-family: inherit; transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .sel-btn.on { background: white; color: #2C2C2C; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- ══════════════════════════════════════
+       SCREEN: LOGIN
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-login">
+    <div style="flex:1; overflow-y:auto;">
+      <div class="auth-logo">
+        <div class="auth-logo-mark">🦥</div>
+        <div class="auth-logo-name">Sloth Feed</div>
+        <div class="auth-logo-tagline">「仕事じゃないけど、、、」が<br>世の中を変える</div>
+      </div>
+      <div class="form-wrap">
+        <div>
+          <div class="form-title">ログイン</div>
+        </div>
+        <div class="field">
+          <label>メールアドレス</label>
+          <input type="email" placeholder="yui@example.com" />
+        </div>
+        <div class="field">
+          <label>パスワード</label>
+          <input type="password" placeholder="••••••••" />
+        </div>
+        <button class="btn-primary" onclick="showScreen('s-feed')">ログイン</button>
+        <div class="link-row">
+          アカウントをお持ちでない方は <a onclick="showScreen('s-register')">新規登録</a>
+        </div>
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: REGISTER
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-register">
+    <div style="flex:1; overflow-y:auto;">
+      <div class="auth-logo">
+        <div class="auth-logo-mark">🦥</div>
+        <div class="auth-logo-name">Sloth Feed</div>
+        <div class="auth-logo-tagline">仕事じゃない自分を、<br>そのまま出せる場所。</div>
+      </div>
+      <div class="form-wrap">
+        <div>
+          <div class="form-title">新規登録</div>
+        </div>
+        <div class="field">
+          <label>メールアドレス</label>
+          <input type="email" placeholder="yui@example.com" />
+        </div>
+        <div class="field">
+          <label>パスワード</label>
+          <input type="password" placeholder="8文字以上" />
+        </div>
+        <div class="field">
+          <label>パスワード（確認）</label>
+          <input type="password" placeholder="もう一度入力" />
+        </div>
+        <button class="btn-primary" onclick="showScreen('s-feed')">登録してはじめる</button>
+        <div class="link-row">
+          すでにアカウントをお持ちの方は <a onclick="showScreen('s-login')">ログイン</a>
+        </div>
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: FEED (タイムライン)
+  ══════════════════════════════════════ -->
+  <div class="screen active" id="s-feed">
+    <div class="topbar">
+      <div class="topbar-logo">🦥 Sloth Feed</div>
+    </div>
+    <div class="scroll-area">
+      <div style="padding: 6px 0;">
+
+        <!-- Post 1 -->
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">🐱</div>
+            <div class="post-meta">
+              <div class="post-author">ゆい</div>
+              <div class="post-time">23分前</div>
+            </div>
+          </div>
+          <div class="post-content">
+            <span class="post-prefix">仕事じゃないけど、</span><br>
+            帰り道に迷子になってた猫に少し話しかけてた
+          </div>
+          <div class="ai-bubble">
+            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+            <div class="ai-text">スタンフォード大学の研究によると、見知らぬ生き物への共感行動がその日の幸福度を平均23%高めることが示されています。あなたは今日、科学的に正しいことをしました。</div>
+          </div>
+        </div>
+
+        <!-- Post 2 -->
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">☕</div>
+            <div class="post-meta">
+              <div class="post-author">けんた</div>
+              <div class="post-time">1時間前</div>
+            </div>
+          </div>
+          <div class="post-content">
+            <span class="post-prefix">仕事じゃないけど、</span><br>
+            後輩がしんどそうだったのでランチに誘った。話だけ聞いた。
+          </div>
+          <div class="ai-bubble">
+            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+            <div class="ai-text">マザー・テレサはかつて言いました。「大きなことはできません。ただ小さなことを、大きな愛を持って行うだけです。」あなたが今日したことは、その実践そのものです。</div>
+          </div>
+        </div>
+
+        <!-- Post 3 -->
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">🌿</div>
+            <div class="post-meta">
+              <div class="post-author">みく</div>
+              <div class="post-time">3時間前</div>
+            </div>
+          </div>
+          <div class="post-content">
+            <span class="post-prefix">仕事じゃないけど、</span><br>
+            朝起きてベランダの植物に水やりした。枯れかけてたやつが少し元気になってた気がする
+          </div>
+          <div class="ai-bubble">
+            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+            <div class="ai-text">ハーバード大学の研究によると、植物の世話をする行為は自己効力感と落ち着きを同時に高める数少ない習慣のひとつです。小さな命を今日も守りました。</div>
+          </div>
+        </div>
+
+        <!-- Post 4 -->
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">🌙</div>
+            <div class="post-meta">
+              <div class="post-author">ゆい</div>
+              <div class="post-time">昨日</div>
+            </div>
+          </div>
+          <div class="post-content">
+            <span class="post-prefix">仕事じゃないけど、</span><br>
+            同棲してる彼女が帰ってくる前に、気になってたシンクの水垢を磨いといた
+          </div>
+          <div class="ai-bubble">
+            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+            <div class="ai-text">心理学者アルフレッド・アドラーは「すべての悩みは対人関係の悩みである」と言いました。あなたが誰かのために何かをする行為は、その関係を静かに、確実に深めています。</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item active" onclick="showScreen('s-feed')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        タイムライン
+      </button>
+      <button class="nav-item" onclick="showScreen('s-post')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        投稿する
+      </button>
+      <button class="nav-item" onclick="showScreen('s-myposts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        マイ投稿
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: POST（投稿フォーム）
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-post">
+
+    <!-- ローディングオーバーレイ -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner"></div>
+      <div class="loading-label">AIが判定中…</div>
+      <div class="loading-sub">Claude が内容を確認しています</div>
+    </div>
+
+    <div class="topbar">
+      <div class="topbar-logo">投稿する</div>
+    </div>
+    <div class="scroll-area" id="post-scroll">
+      <div style="padding: 14px 0 0;">
+
+        <!-- ヒント -->
+        <div class="post-hint">
+          <strong>💡 ここは「仕事じゃないけど」の場所です。</strong><br>
+          仕事の成果・旅行・スポーツ大会の結果はAIが自動的に除外します。
+        </div>
+
+        <!-- 入力フォーム -->
+        <div id="post-form-area" style="padding: 14px;">
+          <div class="field" style="margin-bottom:14px;">
+            <label>仕事じゃないけど、</label>
+            <textarea id="post-input" rows="5" placeholder="今日のランチで食べたラーメンが美味しすぎてちょっと泣いた..." oninput="updateCharCount()"></textarea>
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+            <span id="char-count" style="font-size:12px; color:var(--muted);">0 / 200</span>
+          </div>
+
+          <!-- 投稿パターン選択（デモ用） -->
+          <div style="background:var(--card); border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid var(--border);">
+            <div style="font-size:12px; font-weight:700; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.4px;">デモ：投稿パターンを選択</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button class="demo-btn" onclick="fillPost('ok')">✅ 通過する投稿（猫に話しかけた）</button>
+              <button class="demo-btn" onclick="fillPost('ng')">🚫 除外される投稿（仕事でプレゼン成功）</button>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="submit-btn" onclick="submitPost()" disabled>投稿する</button>
+        </div>
+
+        <!-- 除外バナー -->
+        <div class="reject-banner" id="reject-banner">
+          <div class="reject-title">⚠️ この投稿はここでは使えません</div>
+          <div class="reject-text" id="reject-text"></div>
+          <button class="reject-retry" onclick="resetPost()">別の投稿をする</button>
+        </div>
+
+        <!-- 通過後パネル -->
+        <div class="success-panel" id="success-panel">
+          <div style="font-size:14px; font-weight:700; color:var(--primary); margin-bottom:10px; padding:0 2px;">
+            🎉 投稿が通過しました！
+          </div>
+          <div class="success-post-preview">
+            <div class="success-tag">あなたの投稿</div>
+            <div class="success-content" id="success-content"></div>
+            <div class="ai-bubble">
+              <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+              <div class="ai-text" id="success-ai-text"></div>
+            </div>
+          </div>
+          <button class="success-btn" onclick="goToFeedAfterPost()">タイムラインで確認する</button>
+          <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="resetPost()">続けて投稿する</button>
+        </div>
+
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('s-feed')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        タイムライン
+      </button>
+      <button class="nav-item active" onclick="showScreen('s-post')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        投稿する
+      </button>
+      <button class="nav-item" onclick="showScreen('s-myposts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        マイ投稿
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN: MY POSTS（マイ投稿）
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-myposts">
+    <div class="topbar">
+      <div class="topbar-logo">マイ投稿</div>
+    </div>
+    <div class="scroll-area">
+      <div class="section-label">あなたの「仕事じゃないけど」— 3件</div>
+
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar">🐱</div>
+          <div class="post-meta">
+            <div class="post-author">ゆい</div>
+            <div class="post-time">23分前</div>
+          </div>
+        </div>
+        <div class="post-content">
+          <span class="post-prefix">仕事じゃないけど、</span><br>
+          帰り道に迷子になってた猫に少し話しかけてた
+        </div>
+        <div class="ai-bubble">
+          <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+          <div class="ai-text">スタンフォード大学の研究によると、見知らぬ生き物への共感行動がその日の幸福度を平均23%高めることが示されています。あなたは今日、科学的に正しいことをしました。</div>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar">🌙</div>
+          <div class="post-meta">
+            <div class="post-author">ゆい</div>
+            <div class="post-time">昨日</div>
+          </div>
+        </div>
+        <div class="post-content">
+          <span class="post-prefix">仕事じゃないけど、</span><br>
+          同棲してる彼女が帰ってくる前に、気になってたシンクの水垢を磨いといた
+        </div>
+        <div class="ai-bubble">
+          <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+          <div class="ai-text">アルフレッド・アドラーはかつて「すべての悩みは対人関係の悩みである」と言いました。あなたが誰かのために何かをする行為は、その関係を静かに、確実に深めています。</div>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar">☀️</div>
+          <div class="post-meta">
+            <div class="post-author">ゆい</div>
+            <div class="post-time">3日前</div>
+          </div>
+        </div>
+        <div class="post-content">
+          <span class="post-prefix">仕事じゃないけど、</span><br>
+          寝坊した朝でも窓を開けて空気を入れ替えた。それだけ
+        </div>
+        <div class="ai-bubble">
+          <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
+          <div class="ai-text">禅の教えに「はじめの一歩が道をつくる」という言葉があります。忙しい朝に窓を開けた、その一行動が、今日という日を始めたのです。</div>
+        </div>
+      </div>
+
+      <div style="height:16px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="showScreen('s-feed')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        タイムライン
+      </button>
+      <button class="nav-item" onclick="showScreen('s-post')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        投稿する
+      </button>
+      <button class="nav-item active" onclick="showScreen('s-myposts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        マイ投稿
+      </button>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- 画面セレクター（デモ用） -->
+<div class="screen-selector">
+  <button class="sel-btn" onclick="showScreen('s-login')">ログイン</button>
+  <button class="sel-btn" onclick="showScreen('s-register')">登録</button>
+  <button class="sel-btn on" onclick="showScreen('s-feed')">タイムライン</button>
+  <button class="sel-btn" onclick="showScreen('s-post')">投稿</button>
+  <button class="sel-btn" onclick="showScreen('s-myposts')">マイ投稿</button>
+</div>
+
+<style>
+  .demo-btn {
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+    font-size: 13px; font-weight: 500; color: var(--text);
+    cursor: pointer; text-align: left; font-family: inherit;
+    transition: border-color 0.15s;
+  }
+  .demo-btn:hover { border-color: var(--primary); }
+</style>
+
+<script>
+  const screens = ['s-login','s-register','s-feed','s-post','s-myposts'];
+  const selBtns = document.querySelectorAll('.sel-btn');
+
+  function showScreen(id) {
+    screens.forEach(s => document.getElementById(s).classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    selBtns.forEach((b, i) => {
+      b.classList.toggle('on', screens[i] === id);
+    });
+    if (id === 's-post') resetPost();
+  }
+
+  /* ── 投稿フォーム ── */
+  const POSTS = {
+    ok: {
+      text: '帰り道に迷子になってた猫に少し話しかけてた',
+      aiComment: 'スタンフォード大学の研究によると、見知らぬ生き物への共感行動がその日の幸福度を平均23%高めることが示されています。あなたは今日、科学的に正しいことをしました。',
+    },
+    ng: {
+      text: '今日のプレゼン、部長に「よかった」って言ってもらえた',
+      reason: '「今日のプレゼンが成功した」という内容は、仕事の成果に関する投稿です。Sloth Feed は「仕事じゃないけど」の場所です。仕事以外の行動を投稿してみてください。',
+    },
+  };
+
+  function updateCharCount() {
+    const v = document.getElementById('post-input').value;
+    document.getElementById('char-count').textContent = v.length + ' / 200';
+    document.getElementById('submit-btn').disabled = v.trim().length === 0;
+  }
+
+  function fillPost(type) {
+    const t = POSTS[type].text;
+    document.getElementById('post-input').value = t;
+    updateCharCount();
+  }
+
+  function submitPost() {
+    const overlay = document.getElementById('loading-overlay');
+    overlay.classList.add('show');
+    const input = document.getElementById('post-input').value.trim();
+    const isNG = input.includes('プレゼン') || input.includes('仕事') || input.includes('昇進');
+    setTimeout(() => {
+      overlay.classList.remove('show');
+      document.getElementById('post-form-area').style.display = 'none';
+      if (isNG) {
+        const rb = document.getElementById('reject-banner');
+        document.getElementById('reject-text').textContent = POSTS.ng.reason;
+        rb.classList.add('show');
+      } else {
+        const sp = document.getElementById('success-panel');
+        document.getElementById('success-content').textContent = '仕事じゃないけど、' + input;
+        document.getElementById('success-ai-text').textContent = POSTS.ok.aiComment;
+        sp.classList.add('show');
+      }
+      document.getElementById('post-scroll').scrollTop = 0;
+    }, 2000);
+  }
+
+  function resetPost() {
+    document.getElementById('post-form-area').style.display = 'block';
+    document.getElementById('reject-banner').classList.remove('show');
+    document.getElementById('success-panel').classList.remove('show');
+    document.getElementById('post-input').value = '';
+    document.getElementById('submit-btn').disabled = true;
+    updateCharCount();
+  }
+
+  function goToFeedAfterPost() {
+    showScreen('s-feed');
+  }
+</script>
+
+</body>
+</html>

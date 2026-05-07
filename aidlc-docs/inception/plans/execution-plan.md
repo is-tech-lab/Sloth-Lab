@@ -1,158 +1,103 @@
-# Execution Plan — Refactor the World (RTW) MVP
+# Execution Plan — Sloth Feed PoC
 
 ## 詳細分析サマリー
 
 ### 変更影響評価
-- **ユーザー向けの変更**: Yes — 全機能が新規（カメラ・AI変換・フィード・認証）
-- **構造的な変更**: Yes — 全アーキテクチャが新規
-- **データモデルの変更**: Yes — users / posts / likes スキーマが新規
-- **APIの変更**: Yes — 全エンドポイントが新規
-- **NFR影響**: Yes — AI変換パフォーマンス（10秒以内）・フィード表示（3秒以内）
+
+| 影響領域 | 有無 | 内容 |
+|---------|------|------|
+| ユーザー向けの変更 | Yes | 全機能がユーザー直接操作（投稿・フィード・AIコメント） |
+| 構造的な変更 | Yes | 新規システム。Next.js + DynamoDB + Claude API の統合設計が必要 |
+| データモデルの変更 | Yes | User・Post の新規設計 |
+| API の変更 | Yes | auth / posts / feed / ai-comment の新規エンドポイント設計 |
+| NFR への影響 | Yes | Claude API レスポンスタイム・DynamoDB 設計・JWT 認証 |
 
 ### リスク評価
-- **リスクレベル**: 中（Medium）
-- **主なリスク要因**: 外部AI API（OpenAI）への依存、iOSビルド環境の要件
-- **ロールバック複雑度**: 容易（全部新規のため既存影響なし）
-- **テスト複雑度**: 中（AI変換の出力は非決定的なためテスト設計に工夫が必要）
+
+| 項目 | 評価 |
+|------|------|
+| **リスクレベル** | Medium |
+| **ロールバック複雑性** | Moderate（AWS インフラと Claude API の依存関係あり） |
+| **テスト複雑性** | Moderate（AI フィルタリングの精度検証が必要） |
+| **不確実性** | Claude API のフィルタリング精度（PoC レベルで許容） |
 
 ---
 
 ## ワークフロー可視化
 
-```mermaid
-flowchart TD
-    Start(["RTW MVP"])
-
-    subgraph INCEPTION["INCEPTION PHASE"]
-        WD["Workspace Detection - COMPLETED"]
-        RE["Reverse Engineering - SKIP"]
-        RA["Requirements Analysis - COMPLETED"]
-        US["User Stories - EXECUTE"]
-        WP["Workflow Planning - COMPLETED"]
-        AD["Application Design - EXECUTE"]
-        UG["Units Generation - EXECUTE"]
-    end
-
-    subgraph CONSTRUCTION["CONSTRUCTION PHASE - 別セッション"]
-        FD["Functional Design - DEFERRED"]
-        NFRA["NFR Requirements - DEFERRED"]
-        NFRD["NFR Design - DEFERRED"]
-        ID["Infrastructure Design - DEFERRED"]
-        CG["Code Generation - DEFERRED"]
-        BT["Build and Test - DEFERRED"]
-    end
-
-    subgraph OPERATIONS["OPERATIONS PHASE"]
-        OPS["Operations - PLACEHOLDER"]
-    end
-
-    Start --> WD
-    WD -.-> RE
-    WD --> RA
-    RA --> US
-    US --> WP
-    WP --> AD
-    AD --> UG
-    UG --> FD
-    FD --> NFRA
-    NFRA --> NFRD
-    NFRD --> ID
-    ID --> CG
-    CG --> BT
-    BT -.-> OPS
-    BT --> End(["Complete"])
-
-    style WD fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
-    style RA fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
-    style WP fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
-    style CG fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
-    style BT fill:#4CAF50,stroke:#1B5E20,stroke-width:3px,color:#fff
-    style RE fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
-    style OPS fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
-    style US fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
-    style AD fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
-    style UG fill:#FFA726,stroke:#E65100,stroke-width:3px,stroke-dasharray: 5 5,color:#000
-    style FD fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
-    style NFRA fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
-    style NFRD fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
-    style ID fill:#BDBDBD,stroke:#424242,stroke-width:2px,stroke-dasharray: 5 5,color:#000
-    style Start fill:#CE93D8,stroke:#6A1B9A,stroke-width:3px,color:#000
-    style End fill:#CE93D8,stroke:#6A1B9A,stroke-width:3px,color:#000
-    style INCEPTION fill:#BBDEFB,stroke:#1565C0,stroke-width:3px,color:#000
-    style CONSTRUCTION fill:#C8E6C9,stroke:#2E7D32,stroke-width:3px,color:#000
-    style OPERATIONS fill:#FFF59D,stroke:#F57F17,stroke-width:3px,color:#000
-
-    linkStyle default stroke:#333,stroke-width:2px
 ```
+[INCEPTION PHASE]
+  WD  : Workspace Detection      → COMPLETED
+  RE  : Reverse Engineering      → SKIPPED (Greenfield)
+  RA  : Requirements Analysis    → COMPLETED
+  US  : User Stories             → COMPLETED
+  WP  : Workflow Planning        → COMPLETED (now)
+  AD  : Application Design       → EXECUTE
+  UG  : Units Generation         → EXECUTE
 
-### テキスト代替（フォールバック）
-```
-INCEPTION PHASE
-  [✅] Workspace Detection   — COMPLETED
-  [⏭] Reverse Engineering   — SKIP (Greenfield)
-  [✅] Requirements Analysis — COMPLETED
-  [▶] User Stories          — EXECUTE
-  [✅] Workflow Planning     — COMPLETED
-  [▶] Application Design    — EXECUTE
-  [▶] Units Generation      — EXECUTE
+[CONSTRUCTION PHASE] (ユニットごとのループ)
+  FD  : Functional Design        → EXECUTE
+  NFRA: NFR Requirements         → EXECUTE
+  NFRD: NFR Design               → EXECUTE
+  ID  : Infrastructure Design    → EXECUTE
+  CG  : Code Generation          → EXECUTE (ALWAYS)
+  BT  : Build and Test           → EXECUTE (ALWAYS)
 
-CONSTRUCTION PHASE (別セッション)
-  [⏸] Functional Design     — DEFERRED
-  [⏸] NFR Requirements      — DEFERRED
-  [⏸] NFR Design            — DEFERRED
-  [⏸] Infrastructure Design — DEFERRED
-  [⏸] Code Generation       — DEFERRED
-  [⏸] Build and Test        — DEFERRED
-
-OPERATIONS PHASE
-  [⏸] Operations            — PLACEHOLDER
+[OPERATIONS PHASE]
+  OPS : Operations               → PLACEHOLDER
 ```
 
 ---
 
-## 実行フェーズ一覧
+## 実行するフェーズ
 
-### INCEPTION PHASE
+### 🔵 INCEPTION PHASE
 - [x] Workspace Detection — COMPLETED
-- [x] Reverse Engineering — SKIP（Greenfield のため）
+- [x] Reverse Engineering — SKIPPED (Greenfield)
 - [x] Requirements Analysis — COMPLETED
-- [ ] User Stories — **EXECUTE**
-  - 理由：複数ペルソナ（ペルソナA/B）、新規UX全般、受け入れ基準が必要
-- [x] Workflow Planning — COMPLETED（現在）
+- [x] User Stories — COMPLETED
+- [x] Workflow Planning — COMPLETED
 - [ ] Application Design — **EXECUTE**
-  - 理由：認証・AI変換・投稿・フィードの全コンポーネントを新規設計
+  - **理由**: 新規コンポーネント（Auth / Post / Feed / AIComment）が必要。サービスレイヤー設計と依存関係の明確化が必要
 - [ ] Units Generation — **EXECUTE**
-  - 理由：モバイル / バックエンドAPI / AI統合 / AWSインフラの4ユニット分割が必要
+  - **理由**: 新規データモデル・APIエンドポイント・複数ユニットへの分解が必要。AIフィルタリングとAIコメントは独立したユニットとして設計する
 
-### CONSTRUCTION PHASE — 別セッションで実施
-- [ ] Functional Design — 別セッション
-- [ ] NFR Requirements — 別セッション
-- [ ] NFR Design — 別セッション
-- [ ] Infrastructure Design — 別セッション
-- [ ] Code Generation — 別セッション
-- [ ] Build and Test — 別セッション
+### 🟢 CONSTRUCTION PHASE（ユニットごとのループ）
+- [ ] Functional Design — **EXECUTE**
+  - **理由**: 新規データモデル（User・Post）・AIフィルタリングロジック・AIコメント生成ロジックの詳細設計が必要
+- [ ] NFR Requirements — **EXECUTE**
+  - **理由**: Claude API レスポンスタイム・DynamoDB 設計パターン・JWT 認証・APIコスト管理の要件定義が必要
+- [ ] NFR Design — **EXECUTE**
+  - **理由**: NFR Requirements 実行のため。エラーハンドリング・ロギング設計を含む
+- [ ] Infrastructure Design — **EXECUTE**
+  - **理由**: AWS DynamoDB テーブル設計・Next.js on AWS デプロイ構成・Claude API 統合設計が必要
+- [ ] Code Generation — **EXECUTE** (ALWAYS)
+- [ ] Build and Test — **EXECUTE** (ALWAYS)
 
-### OPERATIONS PHASE
-- [ ] Operations — PLACEHOLDER（将来のデプロイ・モニタリング）
+### 🟡 OPERATIONS PHASE
+- [ ] Operations — PLACEHOLDER（将来のデプロイ・監視ワークフロー）
 
 ---
 
-## 想定ユニット構成（Units Generation で確定）
+## ユニット分解（Units Generation で詳細化）
 
-| # | ユニット名 | 内容 |
-|---|-----------|------|
-| 1 | Backend API | Node.js/TypeScript — 認証・投稿・ユーザーAPI |
-| 2 | AI Integration Service | GPT-4V + DALL-E 3 変換パイプライン |
-| 3 | Mobile App | React Native（iOS）— 全画面UI |
-| 4 | AWS Infrastructure | S3 / RDS / Lambda / CloudFront 構成 |
+| Unit | 名称 | 内容 |
+|------|------|------|
+| Unit 1 | 認証（Auth） | メール+パスワード登録・ログイン・JWT発行・DynamoDB User テーブル |
+| Unit 2 | 投稿 + AIフィルタリング（Post） | テキスト投稿 → Claude API フィルタリング → 除外フィードバック生成 |
+| Unit 3 | AIコメント生成（AIComment） | フィルタリング通過後の称賛コメント生成（偉人・論文引用） |
+| Unit 4 | フィード・投稿履歴（Feed） | タイムライン一覧・自分の投稿一覧 |
+
+**実行順序**: Unit 1（Auth）→ Unit 2（Post + Filtering）→ Unit 3（AIComment）→ Unit 4（Feed）
 
 ---
 
 ## 成功基準
 
-- **Primary Goal**: カメラで写真を撮る → AI変換 → RTWフィードに投稿・閲覧・いいねができる
-- **Key Deliverables**: React NativeアプリのiOSビルド、Node.js APIサーバー、PostgreSQL DB、AI変換パイプライン
+- **Primary Goal**: 「仕事じゃないけど」を投稿 → AIフィルタリング → AIコメント → タイムライン表示 の一連フローが動作する
+- **Key Deliverables**: 認証・投稿・AIフィルタリング・AIコメント・タイムライン・過去投稿一覧
 - **Quality Gates**:
-  - AI変換レスポンス 10秒以内
-  - フィード初回表示 3秒以内
-  - AI変換バリデーション関数にPBT適用（部分）
+  - Claude API が仕事成果・旅行投稿を正しく除外する
+  - Claude API が投稿内容に応じた称賛コメントを生成する
+  - DynamoDB への読み書きが正常に動作する
+  - JWT 認証が正常に動作する

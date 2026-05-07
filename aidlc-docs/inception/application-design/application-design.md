@@ -1,174 +1,168 @@
-# Application Design — Refactor the World (RTW) MVP
+# アプリケーション設計 — Sloth Feed PoC
 
-## システムアーキテクチャ概要
+## 設計サマリー
 
-```mermaid
-flowchart TD
-    subgraph MobileApp["Mobile App (React Native / Expo / iOS)"]
-        Screens["Screens\nAuth / Camera / Transform / Feed / MyPage"]
-        Stores["Zustand Stores\nAuth / Feed / Transform"]
-        APILayer["Axios API Client Layer"]
-        NavComp["React Navigation\nStack + Tab"]
-        Screens --> Stores --> APILayer
-        NavComp --> Screens
-    end
+| 項目 | 決定内容 |
+|------|---------|
+| フレームワーク | Next.js 14+ App Router / TypeScript |
+| サービスレイヤー | `lib/services/` に分離（薄いコントローラ + サービスクラス） |
+| DBアクセス | リポジトリパターン（`lib/repositories/`） |
+| DynamoDB | テーブル分割（Users / Posts） |
+| AI サービス | AIFilteringService と AICommentService を分離 |
+| JWT 認証 | `middleware.ts` で一括検証 |
+| UIコンポーネント | `app/`（ページ）+ `components/`（再利用 UI）分離 |
 
-    subgraph BackendAPI["Backend API - ECS Fargate (Node.js / TypeScript)"]
-        BP["Presenter Layer\nExpress Routers"]
-        BU["Usecase Layer"]
-        BR["Repository Layer\nPrisma ORM"]
-        BD["Domain Layer\nEntities / Value Objects"]
-        BP --> BU --> BR --> BD
-    end
+---
 
-    subgraph AIService["AI Integration Service - ECS Fargate (Node.js / TypeScript)"]
-        AP["Presenter Layer\n/transform endpoint"]
-        AU["ExecuteTransformPipeline\nUsecase"]
-        AR["OpenAI + S3\nRepositories"]
-        AP --> AU --> AR
-    end
+## ディレクトリ構造
 
-    RDS[("RDS PostgreSQL\nusers / posts / likes")]
-    S3CF["S3 + CloudFront\nImage Storage & CDN"]
-    OpenAI["OpenAI API\nGPT-4V + DALL-E 3"]
-    ALBPub["ALB (Public)"]
-    ALBInt["ALB (Internal)"]
-
-    APILayer -->|HTTPS| ALBPub
-    APILayer -->|S3 Presigned URL - Direct PUT| S3CF
-    ALBPub --> BP
-    BR -->|Prisma| RDS
-    BU -->|HTTP / Internal| ALBInt
-    ALBInt --> AP
-    AR -->|AWS SDK| S3CF
-    AR -->|HTTPS| OpenAI
-    S3CF -->|CDN| MobileApp
 ```
-
-### テキスト代替（フォールバック）
-```
-Mobile App (React Native/iOS)
-  ├── Screens (Auth/Camera/Transform/Feed/MyPage)
-  ├── Zustand Stores (Auth/Feed/Transform)
-  ├── Axios API Client Layer
-  └── React Navigation (Stack + Tab)
-       │ HTTPS → ALB (Public)
-       ▼
-Backend API - ECS Fargate (Node.js/TypeScript) [DDD]
-  ├── Presenter Layer (Express Routers)
-  ├── Usecase Layer
-  ├── Repository Layer (Prisma ORM)
-  └── Domain Layer (Entities)
-       │ Prisma → RDS PostgreSQL
-       │ HTTP (internal) → ALB (Internal)
-       ▼
-AI Integration Service - ECS Fargate (Node.js/TypeScript) [DDD]
-  ├── Presenter Layer (/transform)
-  ├── ExecuteTransformPipeline Usecase
-  └── OpenAI + S3 Repositories
-       ├── AWS SDK → S3 + CloudFront
-       └── HTTPS → OpenAI API (GPT-4V + DALL-E 3)
-
-Mobile → S3 (Presigned URL 直接PUT)
-S3 + CloudFront → Mobile (CDN画像配信)
+sloth-feed/
+├── app/
+│   ├── (main)/
+│   │   ├── page.tsx                   # タイムライン
+│   │   ├── post/
+│   │   │   └── page.tsx               # 投稿フォーム
+│   │   └── my-posts/
+│   │       └── page.tsx               # 自分の投稿一覧
+│   ├── auth/
+│   │   ├── login/
+│   │   │   └── page.tsx               # ログイン
+│   │   └── register/
+│   │       └── page.tsx               # 新規登録
+│   └── api/
+│       ├── auth/
+│       │   ├── register/
+│       │   │   └── route.ts
+│       │   └── login/
+│       │       └── route.ts
+│       ├── posts/
+│       │   └── route.ts               # POST: 投稿作成
+│       ├── feed/
+│       │   └── route.ts               # GET: タイムライン
+│       └── my-posts/
+│           └── route.ts               # GET: 自分の投稿一覧
+├── components/
+│   ├── PostCard.tsx
+│   ├── PostForm.tsx
+│   ├── FeedList.tsx
+│   ├── AICommentBubble.tsx
+│   ├── FilteringFeedback.tsx
+│   ├── AuthForm.tsx
+│   └── LoadingSpinner.tsx
+├── lib/
+│   ├── services/
+│   │   ├── auth.service.ts
+│   │   ├── post.service.ts
+│   │   ├── feed.service.ts
+│   │   ├── ai-filtering.service.ts
+│   │   └── ai-comment.service.ts
+│   ├── repositories/
+│   │   ├── user.repository.ts
+│   │   └── post.repository.ts
+│   └── types/
+│       └── index.ts
+└── middleware.ts
 ```
 
 ---
 
-## 設計方針サマリー
+## コンポーネント一覧
 
-| 決定事項 | 選択 | 理由 |
-|---------|------|------|
-| バックエンドアーキテクチャ | DDD（Domain/Usecase/Repository/Presenter） | 長期メンテ・テスト容易性・拡張性（企業機能・ポイントシステム）を考慮 |
-| AI変換パイプライン | **独立 ECS Fargate サービス** | AI処理の重さがバックエンド全体に影響しないよう分離。「短期」ダメポイント解消のためスピーディーな処理を保証 |
-| バックエンドランタイム | **AWS ECS Fargate** | コールドスタートなし。フィード3秒・AI変換10秒の目標を安定達成。「短期」解消の安定性優先 |
-| 画像アップロード | **S3 Presigned URL（直接アップロード）** | バックエンドに画像データを通さず高速。5秒以内目標の達成 |
-| モバイル状態管理 | **Zustand** | 軽量・低ボイラープレート。MVPに適切な規模感 |
-| モバイルAPIクライアント | **Axios + カスタムクライアント層** | JWT自動付与・エラーハンドリング共通化 |
-| モバイルナビゲーション | **React Navigation（Stack + Tab）** | 認証フロー（Stack）とメインアプリ（Tab）の明確な分離 |
-| DBアクセス | **Prisma ORM** | 型安全・スキーマ駆動開発・マイグレーション管理の一体化。MVP段階のシンプルさと将来の拡張性を両立 |
+### バックエンド・サービス
 
----
+| コンポーネント | パス | 主な責務 |
+|--------------|------|---------|
+| AuthService | `lib/services/auth.service.ts` | 登録・ログイン・JWT発行 |
+| PostService | `lib/services/post.service.ts` | 投稿作成フローのオーケストレーション |
+| FeedService | `lib/services/feed.service.ts` | タイムライン・自分の投稿取得 |
+| AIFilteringService | `lib/services/ai-filtering.service.ts` | Claude API でフィルタリング判定 |
+| AICommentService | `lib/services/ai-comment.service.ts` | Claude API で称賛コメント生成 |
+| UserRepository | `lib/repositories/user.repository.ts` | Users テーブル CRUD |
+| PostRepository | `lib/repositories/post.repository.ts` | Posts テーブル CRUD + GSI 検索 |
+| middleware.ts | `middleware.ts` | 保護ルートの JWT 一括検証 |
 
-## ユニット構成
+### フロントエンド・UIコンポーネント
 
-### Unit 1: Backend API
-
-| 項目 | 詳細 |
-|------|------|
-| **ランタイム** | Node.js 20 LTS / TypeScript |
-| **フレームワーク** | Express（またはFastify） |
-| **アーキテクチャ** | DDD 4レイヤー（Presenter / Usecase / Repository / Domain） |
-| **ORM** | Prisma |
-| **デプロイ** | AWS ECS Fargate + ALB（Public） |
-| **主要責務** | 認証・投稿・フィード・いいね・マイページ・Presigned URL発行・AI Serviceへの委譲 |
-| **APIエンドポイント数** | 12 |
-
-### Unit 2: AI Integration Service
-
-| 項目 | 詳細 |
-|------|------|
-| **ランタイム** | Node.js 20 LTS / TypeScript |
-| **アーキテクチャ** | DDD 4レイヤー（Presenter / Usecase / Repository / Domain） |
-| **外部依存** | OpenAI API（GPT-4V + DALL-E 3）, AWS S3 |
-| **デプロイ** | AWS ECS Fargate + ALB（Internal、Backend API からのみアクセス） |
-| **主要責務** | GPT-4V解析 → DALL-E 3生成 → S3アップロードの変換パイプライン |
-| **APIエンドポイント数** | 1（POST /transform） |
-
-### Unit 3: Mobile App
-
-| 項目 | 詳細 |
-|------|------|
-| **フレームワーク** | React Native / Expo（iOSビルド対応） |
-| **状態管理** | Zustand |
-| **HTTPクライアント** | Axios + カスタムAPIクライアント層 |
-| **ナビゲーション** | React Navigation（AuthStack + MainTabNavigator） |
-| **画面数** | 7（Login / Register / Camera / Transform / PostForm / Feed / MyPage） |
-| **Storeコンポーネント** | 4（Auth / Feed / Transform / Post） |
-
-### Unit 4: AWS Infrastructure
-
-| 項目 | 詳細 |
-|------|------|
-| **コンピューティング** | ECS Fargate × 2（Backend API + AI Service） |
-| **データベース** | RDS PostgreSQL（Multi-AZ対応オプション） |
-| **ストレージ** | S3（before/after画像）+ CloudFront（CDN配信） |
-| **ロードバランサー** | ALB × 2（Public: モバイル向け / Internal: AI Service向け） |
-| **シークレット管理** | AWS Secrets Manager（DB接続文字列・OpenAI APIキー・JWT秘密鍵） |
+| コンポーネント | 説明 |
+|--------------|------|
+| PostCard | 投稿本文 + AI称賛コメントを1枚で表示 |
+| PostForm | テキスト入力・送信・バリデーション |
+| FeedList | PostCard のリスト（ページネーション対応） |
+| AICommentBubble | AI称賛コメントの吹き出し表示 |
+| FilteringFeedback | フィルタリング除外時の理由表示 |
+| AuthForm | ログイン・登録の共通フォームベース |
+| LoadingSpinner | Claude API 呼び出し中のローディング |
 
 ---
 
-## 主要なデータフロー（5本）
+## コアフロー：投稿作成
 
-| # | フロー名 | 経路 |
-|---|---------|------|
-| 1 | 認証 | Mobile → Backend API → RDS |
-| 2 | 画像アップロード | Mobile → Backend API（URL発行）→ Mobile → S3（直接PUT） |
-| 3 | AI変換 | Mobile → Backend API → AI Service → OpenAI → S3 → Mobile |
-| 4 | 投稿 | Mobile → Backend API → RDS |
-| 5 | フィード/マイページ | Mobile → Backend API → RDS → CloudFront（画像配信） |
-
----
-
-## 成果物一覧
-
-| ファイル | 内容 |
-|---------|------|
-| `components.md` | 全コンポーネント定義（4ユニット × DDD各レイヤー） |
-| `component-methods.md` | TypeScriptメソッドシグネチャ（Usecase / Repository / Store / Service） |
-| `services.md` | サービス定義・オーケストレーションパターン（6サービスフロー） |
-| `component-dependency.md` | 依存関係マトリクス・コンポーネント内DDD依存ルール・データフロー図 |
-| `application-design.md` | 本ドキュメント（統合設計概要） |
+```
+クライアント → middleware.ts（JWT検証）
+             → POST /api/posts
+             → PostService.createPost
+                  → AIFilteringService.filterPost（Claude API）
+                       ├─ 除外: 422 + reason を返す
+                       └─ 通過:
+                  → AICommentService.generateComment（Claude API）
+                  → PostRepository.create（DynamoDB）
+                  → 201 + Post を返す
+```
 
 ---
 
-## Construction フェーズへの引き継ぎ事項
+## DynamoDB テーブル設計
 
-Construction フェーズ（別セッション）の **Functional Design** で詳細化が必要な項目：
+### Users テーブル
+| 属性 | 型 | キー |
+|------|----|------|
+| userId | String | PK |
+| email | String | GSI PK (email-index) |
+| passwordHash | String | |
+| createdAt | String (ISO) | |
 
-- `RegisterUserUsecase`: パスワード強度バリデーション・ユーザー名文字数制約
-- `GetFeedUsecase`: ページネーション上限・フィードのソートロジック詳細
-- `LikePostUsecase`: 重複いいね時のエラーハンドリング詳細
-- `ExecuteTransformPipelineUsecase`: GPT-4Vプロンプト設計・DALL-E 3プロンプト構築ロジック・タイムアウト値
-- `GeneratePresignedUrlUsecase`: Presigned URL有効期限・許可するファイルサイズ上限
-- PBT適用対象（AI変換バリデーション関数）の詳細仕様
+### Posts テーブル
+| 属性 | 型 | キー |
+|------|----|------|
+| postId | String | PK |
+| content | String | |
+| authorId | String | GSI PK (authorId-createdAt-index) |
+| aiComment | String | |
+| createdAt | String (ISO) | GSI SK |
+
+---
+
+## API エンドポイント一覧
+
+| メソッド | パス | 認証 | 説明 |
+|---------|------|------|------|
+| POST | /api/auth/register | なし | ユーザー登録 |
+| POST | /api/auth/login | なし | ログイン・JWT発行 |
+| POST | /api/posts | JWT | 投稿作成（フィルタリング〜コメント生成） |
+| GET | /api/feed | なし | タイムライン取得 |
+| GET | /api/my-posts | JWT | 自分の投稿一覧取得 |
+
+---
+
+## 環境変数
+
+| 変数名 | 用途 |
+|--------|------|
+| ANTHROPIC_API_KEY | Claude API 認証 |
+| DYNAMODB_USERS_TABLE | Users テーブル名 |
+| DYNAMODB_POSTS_TABLE | Posts テーブル名 |
+| AWS_REGION | DynamoDB リージョン |
+| JWT_SECRET | JWT 署名シークレット |
+| JWT_EXPIRES_IN | JWT 有効期限（例: `7d`） |
+
+---
+
+## 設計の詳細
+
+各成果物の詳細はそれぞれのファイルを参照：
+
+- コンポーネント定義・責務 → [components.md](components.md)
+- メソッドシグネチャ・型定義 → [component-methods.md](component-methods.md)
+- サービス定義・オーケストレーション → [services.md](services.md)
+- 依存関係・データフロー図 → [component-dependency.md](component-dependency.md)

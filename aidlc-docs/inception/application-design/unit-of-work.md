@@ -1,475 +1,163 @@
-# Unit of Work — Refactor the World (RTW) MVP
+# ユニット・オブ・ワーク定義 — Sloth Feed
 
-> このドキュメントは `components.md` と `component-methods.md` を統合し、
-> フィーチャーユニット単位で再整理したものです。
+## 変更点（実行計画からの更新）
 
-## フィーチャーユニット概要
-
-| # | ユニット名 | ストーリー | Priority | 独立性の根拠 |
-|---|-----------|-----------|----------|------------|
-| 1 | **認証 (Auth)** | US-01〜03 | P1 | 他ユニットに依存しない基盤。JWTを発行するのみ |
-| 2 | **Capture & Refactor** | US-04〜07 | P0 | カメラ・AI変換パイプライン。ソーシャル機能に依存しない |
-| 3 | **Social Feed** | US-08〜11 | P1 | 投稿・フィード・いいね。画像URLを入力として受けるだけでUnit2コードに依存しない |
-| 4 | **My Page** | US-12〜13 | P2 | DBへの読み取りクエリのみ。他ユニットのコードに依存しない |
-
-**開発順序**: Unit 1 → Unit 2 → Unit 3 → Unit 4（依存関係の少ない順）  
-**共通前提**: packages/shared の型定義を先に作成する
+実行計画では4ユニット（Auth / Post+Filtering / AIComment / Feed）を予定していたが、
+ユニット生成フェーズでの決定により **Unit 2 と Unit 3 を統合**。
+最終構成は **3ユニット** となる。
 
 ---
 
-## コード整理戦略（モノレポ）
+## ユニット一覧
 
-```
-/  (Sloth-Lab ワークスペースルート)
-├── apps/
-│   ├── backend-api/          # Backend API（Unit 1〜4 のAPIを実装）
-│   │   ├── src/
-│   │   │   ├── domain/       # Domain Layer
-│   │   │   ├── usecase/      # Usecase Layer
-│   │   │   ├── repository/   # Repository Layer (interfaces + Prisma実装)
-│   │   │   └── presenter/    # Presenter Layer (Express routers)
-│   │   └── prisma/schema.prisma
-│   │
-│   ├── ai-service/           # AI Integration Service（Unit 2 専用）
-│   │   └── src/
-│   │       ├── domain/
-│   │       ├── usecase/
-│   │       ├── repository/
-│   │       └── presenter/
-│   │
-│   └── mobile/               # Mobile App（Unit 1〜4 の画面を実装）
-│       └── src/
-│           ├── screens/
-│           ├── stores/
-│           ├── services/
-│           └── navigation/
-│
-├── packages/
-│   └── shared/               # 共有型定義（全ユニットが参照）
-│       └── src/types/
-│
-├── infra/                    # AWS CDK（全ユニットのインフラ）
-│   └── lib/
-│
-├── package.json
-└── pnpm-workspace.yaml
-```
+| Unit | 名称 | 開発順序 |
+|------|------|---------|
+| Unit 1 | 認証（Auth） | 1番目 |
+| Unit 2 | 投稿 + AI（Post + AI） | 2番目 |
+| Unit 3 | フィード（Feed） | 3番目 |
 
 ---
 
-## Unit 1: 認証 (Auth)
+## Unit 1 — 認証（Auth）
 
-**ストーリー**: US-01（新規登録）、US-02（ログイン）、US-03（ログアウト）
+**スコープ**: Next.js プロジェクト初期化 + メール・パスワード認証 + 共通基盤
 
-### Backend API コンポーネント
+### 含まれる機能
+- Next.js 14+ App Router プロジェクトのスキャフォールディング
+- メールアドレス＋パスワードによるユーザー登録
+- ログイン・JWT 発行・JWT 検証ミドルウェア
+- DynamoDB Users テーブルの作成
+- `lib/` 共通モジュールの初期化（後続ユニットで再利用）
 
-#### Presenter Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `AuthRouter` | POST /auth/register, POST /auth/login, POST /auth/logout |
-| `JWTAuthMiddleware` | Authorization ヘッダーのJWT検証（全認証ルートで使用） |
+### 生成するファイル
 
-#### Usecase Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `RegisterUserUsecase` | メール重複確認 → パスワードハッシュ化 → ユーザー作成 → JWT発行 |
-| `LoginUserUsecase` | メール検索 → パスワード照合 → JWT発行 |
-| `LogoutUserUsecase` | セッション終了処理 |
-| `GetMeUsecase` | 認証済みユーザーのプロフィール返却 |
-
-#### Repository Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `IUserRepository` | Userエンティティのデータアクセスインターフェース |
-| `PrismaUserRepository` | `IUserRepository` のPrisma実装 |
-
-#### Domain Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `User` | ユーザーエンティティ（id, email, passwordHash, username, points: NULL） |
-| `JWTToken` | JWT値オブジェクト。発行・検証ロジック |
-| `PasswordHash` | パスワード値オブジェクト。bcryptハッシュ化・照合ロジック |
-
-### Mobile App コンポーネント
-
-| コンポーネント | 責務 |
-|-------------|------|
-| `LoginScreen` | メール・パスワード入力フォーム + ログインボタン |
-| `RegisterScreen` | ユーザー名・メール・パスワード入力フォーム + 登録ボタン |
-| `AuthStore` | JWT token, currentUser のグローバル状態。login/logout アクション |
-| `AuthAPIService` | register, login の APIリクエストラッパー |
-| `AuthStack` | LoginScreen + RegisterScreen のスタックナビゲーション |
-
-### AWS コンポーネント（Auth）
-
-| コンポーネント | 責務 |
-|-------------|------|
-| Secrets Manager（JWT秘密鍵） | JWT署名用シークレットの安全な管理 |
-| RDS `users` テーブル | ユーザーデータの永続化 |
-
-### キーメソッドシグネチャ（Unit 1）
-
-```typescript
-// --- Usecase Layer ---
-
-interface RegisterUserInput { email: string; password: string; username: string }
-interface AuthOutput { token: string; user: { id: string; email: string; username: string } }
-class RegisterUserUsecase { execute(input: RegisterUserInput): Promise<AuthOutput> }
-
-interface LoginUserInput { email: string; password: string }
-class LoginUserUsecase  { execute(input: LoginUserInput):    Promise<AuthOutput> }
-class LogoutUserUsecase { execute(userId: string):           Promise<void> }
-class GetMeUsecase      { execute(userId: string):           Promise<UserOutput> }
-
-// --- Repository Interface ---
-
-interface IUserRepository {
-  findById(id: string):       Promise<User | null>
-  findByEmail(email: string): Promise<User | null>
-  create(data: { email: string; passwordHash: string; username: string }): Promise<User>
-}
-
-// --- Mobile Store ---
-
-interface AuthState  { token: string | null; currentUser: UserData | null; isAuthenticated: boolean }
-interface AuthActions { login(token: string, user: UserData): void; logout(): void }
-
-// --- Mobile Service ---
-
-class AuthAPIService {
-  register(input: { email: string; password: string; username: string }): Promise<AuthOutput>
-  login(input: { email: string; password: string }): Promise<AuthOutput>
-}
+**プロジェクト基盤**
 ```
+package.json
+tsconfig.json
+next.config.ts
+.env.local.example
+```
+
+**共通モジュール（後続ユニットが再利用）**
+```
+lib/types/index.ts            # 共有型定義（User, Post, FilterResult 等）
+lib/db/client.ts              # DynamoDB クライアントシングルトン
+lib/utils/errors.ts           # エラーハンドリングユーティリティ
+```
+
+**Auth モジュール**
+```
+lib/repositories/user.repository.ts
+lib/services/auth.service.ts
+app/api/auth/register/route.ts
+app/api/auth/login/route.ts
+app/auth/login/page.tsx
+app/auth/register/page.tsx
+components/AuthForm.tsx
+middleware.ts
+```
+
+### DynamoDB テーブル
+- **Users** テーブル（PK: userId、GSI: email-index）
+
+### 完了基準
+- `POST /api/auth/register` でユーザーを作成できる
+- `POST /api/auth/login` で JWT を取得できる
+- `middleware.ts` が保護ルートで JWT を検証し、`x-user-id` ヘッダを付与する
 
 ---
 
-## Unit 2: Capture & Refactor（カメラ + AI変換）
+## Unit 2 — 投稿 + AI（Post + AI）
 
-**ストーリー**: US-04（カメラ撮影）、US-05（カメラロール選択）、US-06（AI変換実行）、US-07（変換確認・再変換）
+**スコープ**: テキスト投稿フロー全体（フィルタリング → コメント生成 → 保存）
 
-### Backend API コンポーネント
+### 含まれる機能
+- 投稿テキスト入力フォーム
+- Claude API によるフィルタリング判定（仕事の成果・旅行・スポーツ大会結果等を除外）
+- フィルタリング除外時の理由表示（Claude が日本語で生成）
+- フィルタリング通過後の Claude API による称賛コメント生成
+- 投稿 + AI コメントの DynamoDB 保存
 
-#### Presenter Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `UploadRouter` | GET /upload/presigned-url（S3 Presigned URL発行） |
-| `TransformRouter` | POST /transform（AI Serviceへの委譲エンドポイント） |
+### 前提条件
+- Unit 1 完了（認証・`lib/` 共通モジュール・DynamoDB クライアント利用可能）
 
-#### Usecase Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `GeneratePresignedUrlUsecase` | S3オブジェクトキー生成 → Presigned URLとCDN URLを返す |
-| `RequestTransformUsecase` | AI Integration Serviceにリクエスト委譲 → 結果をMobileに返す |
-
-#### Repository Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `IS3Repository` | S3操作インターフェース |
-| `AWSS3Repository` | `IS3Repository` のAWS SDK実装 |
-| `IAIServiceClient` | AI Serviceとの通信インターフェース |
-| `HTTPAIServiceClient` | `IAIServiceClient` のHTTP実装 |
-
-### AI Integration Service コンポーネント（Unit 2 専用サービス）
-
-#### Presenter Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `TransformRequestRouter` | POST /transform（Backend APIからの内部リクエストのみ受付） |
-| `InternalAuthMiddleware` | 共有シークレットキーによる内部サービス認証 |
-
-#### Usecase Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `ExecuteTransformPipelineUsecase` | GPT-4V解析 → DALL-E 3生成 → S3アップロードの3ステップパイプライン |
-
-#### Repository Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `IOpenAIRepository` | OpenAI API操作インターフェース |
-| `OpenAIRepository` | GPT-4V（画像解析）+ DALL-E 3（画像生成）のOpenAI SDK実装 |
-| `IS3StorageRepository` | AI Service用S3操作インターフェース |
-| `AWSS3StorageRepository` | after画像のS3アップロードを担当。CloudFront URLを返す |
-
-#### Domain Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `TransformRequest` | 変換リクエストエンティティ（beforeImageUrl, analysisResult, afterImageUrl, status） |
-| `TransformStatus` | 変換ステータス列挙型（PENDING / ANALYZING / GENERATING / UPLOADING / COMPLETED / FAILED） |
-
-### Mobile App コンポーネント
-
-| コンポーネント | 責務 |
-|-------------|------|
-| `CameraScreen` | カメラ起動・シャッター操作・カメラロール選択 |
-| `TransformScreen` | AI変換実行・ローディング表示・before/after確認・再変換ボタン |
-| `TransformStore` | beforeImageUri, afterImageUrl, isLoading, error の状態管理 |
-| `UploadAPIService` | Presigned URL取得 → S3直接アップロードの2ステップを管理 |
-| `TransformAPIService` | POST /transform の APIリクエストラッパー |
-
-### AWS コンポーネント（Capture & Refactor）
-
-| コンポーネント | 責務 |
-|-------------|------|
-| S3 Bucket | before/after画像の保存 |
-| CloudFront Distribution | 画像CDN配信（全画像URLはCloudFrontドメイン） |
-| AI Service ECS Fargate | AI Integrationコンテナ実行 |
-| ALB（Internal） | Backend API → AI Service の内部通信 |
-
-### キーメソッドシグネチャ（Unit 2）
-
-```typescript
-// --- Backend API Usecase ---
-
-interface PresignedUrlInput  { filename: string; contentType: string }
-interface PresignedUrlOutput { presignedUrl: string; imageKey: string; cdnUrl: string }
-class GeneratePresignedUrlUsecase { execute(input: PresignedUrlInput): Promise<PresignedUrlOutput> }
-
-interface TransformInput  { beforeImageUrl: string }
-interface TransformOutput { beforeImageUrl: string; afterImageUrl: string }
-class RequestTransformUsecase { execute(input: TransformInput): Promise<TransformOutput> }
-
-// --- Backend API Repository Interfaces ---
-
-interface IS3Repository {
-  generatePresignedUrl(key: string, contentType: string): Promise<{ presignedUrl: string; cdnUrl: string }>
-}
-interface IAIServiceClient {
-  requestTransform(beforeImageUrl: string): Promise<{ afterImageUrl: string }>
-}
-
-// --- AI Service Usecase ---
-
-interface TransformPipelineInput  { beforeImageUrl: string }
-interface TransformPipelineOutput { afterImageUrl: string }
-class ExecuteTransformPipelineUsecase {
-  // Step 1: OpenAIRepository.analyzeImage → prompt
-  // Step 2: OpenAIRepository.generateImage → imageBuffer
-  // Step 3: AWSS3StorageRepository.uploadImage → cdnUrl
-  execute(input: TransformPipelineInput): Promise<TransformPipelineOutput>
-}
-
-// --- AI Service Repository Interfaces ---
-
-interface IOpenAIRepository {
-  analyzeImage(imageUrl: string):   Promise<{ prompt: string }>
-  generateImage(prompt: string):    Promise<{ imageBuffer: Buffer }>
-}
-interface IS3StorageRepository {
-  uploadImage(buffer: Buffer, key: string, contentType: string): Promise<{ cdnUrl: string }>
-}
-
-// --- Mobile Store ---
-
-interface TransformState {
-  beforeImageUri: string | null; beforeImageUrl: string | null
-  afterImageUrl: string | null; isLoading: boolean; error: string | null
-}
-interface TransformActions {
-  setBeforeImage(uri: string): void; setBeforeImageUrl(url: string): void
-  setAfterImage(url: string): void; setLoading(loading: boolean): void
-  setError(error: string | null): void; reset(): void
-}
-
-// --- Mobile Services ---
-
-class UploadAPIService {
-  getPresignedUrl(filename: string, contentType: string): Promise<{ presignedUrl: string; cdnUrl: string }>
-  uploadToS3(presignedUrl: string, imageData: Blob, contentType: string): Promise<void>
-  uploadImage(imageUri: string): Promise<{ cdnUrl: string }>   // 上記2ステップの連続実行ヘルパー
-}
-class TransformAPIService {
-  requestTransform(beforeImageUrl: string): Promise<TransformOutput>
-}
+### 生成するファイル
 ```
+lib/repositories/post.repository.ts
+lib/services/ai-filtering.service.ts
+lib/services/ai-comment.service.ts
+lib/services/post.service.ts
+app/api/posts/route.ts
+app/(main)/post/page.tsx
+components/PostForm.tsx
+components/FilteringFeedback.tsx
+components/AICommentBubble.tsx
+components/LoadingSpinner.tsx
+```
+
+### DynamoDB テーブル
+- **Posts** テーブル（PK: postId、GSI: authorId-createdAt-index）
+
+### 完了基準
+- `POST /api/posts` に `content` を送ると Claude がフィルタリング判定する
+- 仕事の成果・旅行投稿が 422（除外理由付き）で返される
+- 「仕事じゃないけど」系の投稿が通過し、AI 称賛コメントとともに保存される
 
 ---
 
-## Unit 3: Social Feed（投稿 + フィード + いいね）
+## Unit 3 — フィード（Feed）
 
-**ストーリー**: US-08（投稿）、US-09（フィード閲覧）、US-10（いいね）、US-11（いいね取消）
+**スコープ**: タイムライン閲覧・自分の投稿一覧閲覧
 
-### Backend API コンポーネント
+### 含まれる機能
+- 全ユーザーの投稿タイムライン（新しい順、未ログインで閲覧可能）
+- 自分の過去投稿一覧（ログイン必須）
+- 各投稿に AI 称賛コメントを表示
 
-#### Presenter Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `PostRouter` | POST /posts |
-| `FeedRouter` | GET /feed |
-| `LikeRouter` | POST /likes/:postId, DELETE /likes/:postId |
+### 前提条件
+- Unit 1 完了（認証・`lib/` 共通モジュール）
+- Unit 2 完了（PostRepository・Posts テーブル利用可能）
 
-#### Usecase Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `CreatePostUsecase` | before/after画像URLとカテゴリタグで投稿レコードを作成 |
-| `GetFeedUsecase` | 新着順フィードをページネーション付きで返す |
-| `LikePostUsecase` | いいねを記録し likes_count をインクリメント |
-| `UnlikePostUsecase` | いいねを取り消し likes_count をデクリメント |
-
-#### Repository Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `IPostRepository` | Postエンティティのデータアクセスインターフェース |
-| `PrismaPostRepository` | `IPostRepository` のPrisma実装 |
-| `ILikeRepository` | Likeエンティティのデータアクセスインターフェース |
-| `PrismaLikeRepository` | `ILikeRepository` のPrisma実装 |
-
-#### Domain Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `Post` | 投稿エンティティ（id, userId, beforeImageUrl, afterImageUrl, categoryTag, likesCount） |
-| `Like` | いいねエンティティ（id, userId, postId）。UNIQUE(userId, postId) |
-
-### Mobile App コンポーネント
-
-| コンポーネント | 責務 |
-|-------------|------|
-| `PostFormScreen` | カテゴリタグ選択 + 投稿ボタン |
-| `FeedScreen` | 他ユーザー投稿のスクロールリスト + いいねボタン |
-| `FeedStore` | feedPosts一覧・ページネーション位置・いいね楽観的更新 |
-| `PostStore` | 投稿フォームの一時状態（カテゴリタグ選択） |
-| `PostAPIService` | POST /posts のリクエストラッパー |
-| `FeedAPIService` | GET /feed（ページネーション対応）のリクエストラッパー |
-| `LikeAPIService` | POST/DELETE /likes/:postId のリクエストラッパー |
-
-### キーメソッドシグネチャ（Unit 3）
-
-```typescript
-// --- Usecase Layer ---
-
-interface PostOutput { id: string; userId: string; beforeImageUrl: string; afterImageUrl: string; categoryTag: string; likesCount: number; createdAt: Date; user: { username: string } }
-interface CreatePostInput { userId: string; beforeImageUrl: string; afterImageUrl: string; categoryTag: 'food' | 'city' | 'interior' | 'other' }
-class CreatePostUsecase { execute(input: CreatePostInput): Promise<PostOutput> }
-
-interface FeedOutput { posts: PostOutput[]; totalCount: number; hasNextPage: boolean }
-class GetFeedUsecase   { execute(input: { page: number; limit: number }): Promise<FeedOutput> }
-class LikePostUsecase  { execute(input: { userId: string; postId: string }): Promise<void> }
-class UnlikePostUsecase{ execute(input: { userId: string; postId: string }): Promise<void> }
-
-// --- Repository Interfaces ---
-
-interface IPostRepository {
-  create(data: { userId: string; beforeImageUrl: string; afterImageUrl: string; categoryTag: string }): Promise<Post>
-  findFeed(input: { page: number; limit: number }): Promise<{ posts: Post[]; totalCount: number }>
-  incrementLikesCount(postId: string): Promise<void>
-  decrementLikesCount(postId: string): Promise<void>
-}
-interface ILikeRepository {
-  findByUserAndPost(userId: string, postId: string): Promise<Like | null>
-  create(data: { userId: string; postId: string }): Promise<Like>
-  delete(userId: string, postId: string): Promise<void>
-}
-
-// --- Mobile Store ---
-
-interface FeedState { posts: PostData[]; currentPage: number; hasNextPage: boolean; isLoading: boolean }
-interface FeedActions {
-  setPosts(posts: PostData[]): void
-  appendPosts(posts: PostData[]): void
-  toggleLike(postId: string, liked: boolean): void  // 楽観的更新
-  setLoading(loading: boolean): void; reset(): void
-}
-
-// --- Mobile Services ---
-
-class PostAPIService { createPost(input: { beforeImageUrl: string; afterImageUrl: string; categoryTag: string }): Promise<PostOutput> }
-class FeedAPIService { getFeed(page: number, limit?: number): Promise<{ posts: PostData[]; hasNextPage: boolean }> }
-class LikeAPIService { likePost(postId: string): Promise<void>; unlikePost(postId: string): Promise<void> }
+### 生成するファイル
 ```
+lib/services/feed.service.ts
+app/api/feed/route.ts
+app/api/my-posts/route.ts
+app/(main)/page.tsx           # タイムライン（未ログインでも閲覧可）
+app/(main)/my-posts/page.tsx  # 自分の投稿一覧（ログイン必須）
+components/PostCard.tsx
+components/FeedList.tsx
+```
+
+### 完了基準
+- `GET /api/feed` が未認証でもタイムラインを返す
+- `GET /api/my-posts` が JWT 必須で自分の投稿一覧を返す
+- タイムラインページ（`/`）が未ログインユーザーでもアクセス可能
 
 ---
 
-## Unit 4: My Page（マイページ）
+## 実行順序
 
-**ストーリー**: US-12（自分の投稿一覧）、US-13（いいねした投稿一覧）
-
-### Backend API コンポーネント
-
-#### Presenter Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `UserRouter` | GET /users/me, GET /users/me/posts, GET /users/me/likes |
-
-#### Usecase Layer
-| コンポーネント | 責務 |
-|-------------|------|
-| `GetMyPostsUsecase` | 認証済みユーザーの投稿一覧をページネーション付きで返す |
-| `GetLikedPostsUsecase` | 認証済みユーザーがいいねした投稿一覧を返す |
-
-#### Repository Layer（既存の再利用）
-| コンポーネント | 再利用元 |
-|-------------|---------|
-| `IPostRepository.findByUserId()` | Unit 3で定義 |
-| `ILikeRepository.findByUserId()` | Unit 3で定義 |
-
-### Mobile App コンポーネント
-
-| コンポーネント | 責務 |
-|-------------|------|
-| `MyPageScreen` | 「投稿」「いいね」タブ切り替え。PostListを表示 |
-| `UserAPIService` | getMyPosts, getLikedPosts の APIリクエストラッパー |
-
-### キーメソッドシグネチャ（Unit 4）
-
-```typescript
-// --- Usecase Layer ---
-
-class GetMyPostsUsecase    { execute(input: { userId: string; page: number; limit: number }): Promise<FeedOutput> }
-class GetLikedPostsUsecase { execute(input: { userId: string; page: number; limit: number }): Promise<FeedOutput> }
-
-// --- Repository Interface 追加メソッド ---
-
-interface IPostRepository {
-  // Unit 3 の定義に追加:
-  findByUserId(userId: string, pagination: { page: number; limit: number }): Promise<{ posts: Post[]; totalCount: number }>
-}
-interface ILikeRepository {
-  // Unit 3 の定義に追加:
-  findByUserId(userId: string, pagination: { page: number; limit: number }): Promise<Like[]>
-}
-
-// --- Mobile Service ---
-
-class UserAPIService {
-  getMe(): Promise<UserData>
-  getMyPosts(page: number): Promise<{ posts: PostData[]; hasNextPage: boolean }>
-  getLikedPosts(page: number): Promise<{ posts: PostData[]; hasNextPage: boolean }>
-}
+```
+Unit 1（Auth）
+  └─→ Unit 2（Post + AI）        ← Unit 1 の lib/ 共通モジュールを利用
+          └─→ Unit 3（Feed）      ← Unit 1・2 の Repository・テーブルを利用
 ```
 
----
+## コード整理戦略
 
-## 共通コンポーネント（クロスカッティング）
+すべてのユニットは **1 つの Next.js モノリポジトリ** 内に配置する。
 
-全ユニットで横断的に使用されるコンポーネント。
-
-### packages/shared（型定義）
-
-```typescript
-// 全ユニットが参照する共通型（apps/* が @rtw/shared としてimport）
-export interface UserData      { id: string; email: string; username: string; createdAt: Date }
-export interface PostData      { id: string; userId: string; beforeImageUrl: string; afterImageUrl: string; categoryTag: string; likesCount: number; createdAt: Date; user: { username: string } }
-export interface AuthOutput    { token: string; user: UserData }
-export interface FeedOutput    { posts: PostData[]; totalCount: number; hasNextPage: boolean }
-export interface TransformOutput { beforeImageUrl: string; afterImageUrl: string }
-```
-
-### Mobile App 共通コンポーネント
-
-| コンポーネント | 責務 |
-|-------------|------|
-| `APIClient` | Axiosインスタンス。JWTをインターセプターで自動付与。401時にAuthStoreをクリアしてログイン画面へ |
-| `RootNavigator` | isAuthenticated に応じてAuthStack↔MainTabNavigatorを切り替え |
-| `MainTabNavigator` | Feed / Camera / MyPage のボトムタブ |
-
-### AWS Infrastructure（全ユニット共通）
-
-| コンポーネント | 関連ユニット |
-|-------------|------------|
-| ECS Fargate（Backend API） | Unit 1〜4 すべて |
-| ECS Fargate（AI Service） | Unit 2 のみ |
-| RDS PostgreSQL | Unit 1（users）, Unit 3（posts/likes）, Unit 4（posts/likes読取） |
-| S3 + CloudFront | Unit 2（画像保存）, Unit 3（画像表示） |
-| ALB Public | Unit 1〜4（Mobile → Backend API） |
-| ALB Internal | Unit 2（Backend API → AI Service） |
-| Secrets Manager | Unit 1（JWT）, Unit 2（OpenAI API Key, Internal Secret）, 全ユニット（DB接続文字列） |
+| フォルダ | 所有ユニット | 説明 |
+|---------|------------|------|
+| `lib/types/` | Unit 1 で初期化、全ユニット利用 | 共有型定義 |
+| `lib/db/` | Unit 1 で初期化、全ユニット利用 | DynamoDB クライアント |
+| `lib/utils/` | Unit 1 で初期化、全ユニット利用 | 共通ユーティリティ |
+| `lib/repositories/user.repository.ts` | Unit 1 | Users テーブルアクセス |
+| `lib/services/auth.service.ts` | Unit 1 | 認証ロジック |
+| `lib/repositories/post.repository.ts` | Unit 2 | Posts テーブルアクセス |
+| `lib/services/ai-filtering.service.ts` | Unit 2 | フィルタリング |
+| `lib/services/ai-comment.service.ts` | Unit 2 | コメント生成 |
+| `lib/services/post.service.ts` | Unit 2 | 投稿オーケストレーション |
+| `lib/services/feed.service.ts` | Unit 3 | フィード取得 |
