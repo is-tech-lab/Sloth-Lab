@@ -537,3 +537,28 @@ AIモデルは以下に基づいて必要なステージをインテリジェン
 - アプリケーションコード：ワークスペースルート（aidlc-docs/ 内には禁止 (NEVER)）
 - ドキュメント：aidlc-docs/ のみ
 - プロジェクト構造：プロジェクトタイプ別のパターンについては code-generation.md を参照
+
+---
+
+# Claude Code ワークフロー
+
+## ドキュメント構成
+
+- **aidlc-docs/inception/project-overview.md** - プロジェクト概要（ビジョン・コンセプト・コアバリュー・ターゲットユーザー）。Ideation開始前に記入する。
+- **docs/ideation/** - Ideation フェーズの出力（customer_insights.md / ideas.md / commercialization.md）
+- **docs/permanent/** - 永続的ドキュメント（要件定義・機能設計・技術仕様など）
+- **.steering/[YYYYMMDD]-[開発タイトル]/** - 作業単位のステアリングファイル（requirements.md / design.md / tasklist.md）
+
+## カスタムコマンド
+
+| コマンド | 用途 |
+|---------|------|
+| `/init-project` | 新規プロジェクトの初回セットアップ（docs/ と .steering/ の作成） |
+| `/new-feature` | 機能追加・修正時のステアリングディレクトリ作成ワークフロー |
+
+## 開発ルール
+
+### ドキュメント管理
+- 永続的ドキュメント (docs/permanent/) は大きな設計変更時のみ更新
+- 作業単位のドキュメント (.steering/) は作業ごとに新しいディレクトリを作成
+- 図表・ダイアグラムは関連する永続的ドキュメント内に直接記載（Mermaid記法推奨）
