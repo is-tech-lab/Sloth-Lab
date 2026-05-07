@@ -1,9 +1,10 @@
 # AI-DLC State Tracking
 
 ## Project Information
+- **Project Name**: Sloth Feed
 - **Project Type**: Greenfield
-- **Start Date**: 2026-04-30T00:00:00Z
-- **Current Stage**: INCEPTION - Workspace Detection
+- **Start Date**: 2026-05-07T00:00:00Z
+- **Current Stage**: INCEPTION PHASE完了（Construction Phaseはスキップ）
 
 ## Workspace State
 - **Existing Code**: No
@@ -15,19 +16,26 @@
 - **Documentation**: aidlc-docs/ only
 - **Structure patterns**: See code-generation.md Critical Rules
 
+## Extension Configuration
+| Extension | Enabled | Decided At |
+|-----------|---------|------------|
+| Security Baseline | No | Requirements Analysis |
+| Property-Based Testing | No | Requirements Analysis |
+
 ## Stage Progress
 
-### インセプション・フェーズ (INCEPTION PHASE)
-- [x] ワークスペース検出 (Workspace Detection) — 完了
-- [ ] 要件分析 (Requirements Analysis) — 進行中
-- [ ] ユーザーストーリー (User Stories) — 評価待ち
-- [ ] ワークフロープランニング (Workflow Planning) — 未実行
-- [ ] アプリケーション設計 (Application Design) — 評価待ち
-- [ ] ユニット生成 (Units Generation) — 評価待ち
+### INCEPTION PHASE
+- [x] Workspace Detection — Greenfield確認、コード未存在
+- [x] Requirements Analysis — 要件定義完了
+- [x] User Stories — personas.md・stories.md生成完了（認証あり・AIコメントに変更）
+- [x] Workflow Planning — 実行計画確定（8ステージ実行・RE/OPSスキップ）
+- [x] Application Design — 設計成果物生成完了（5ファイル）
+- [x] Units Generation — 3ユニット確定（Auth / Post+AI / Feed）
 
-### コンストラクション・フェーズ (CONSTRUCTION PHASE)
-- [ ] 未開始
-
-## Extension Configuration
-- security-baseline: 未設定（要件分析時に確認）
-- property-based-testing: 未設定（要件分析時に確認）
+### CONSTRUCTION PHASE
+- [ ] Functional Design — SKIPPED（ユーザー判断）
+- [ ] NFR Requirements — SKIPPED（ユーザー判断）
+- [ ] NFR Design — SKIPPED（ユーザー判断）
+- [ ] Infrastructure Design — SKIPPED（ユーザー判断）
+- [ ] Code Generation — SKIPPED（ユーザー判断）
+- [ ] Build and Test — SKIPPED（ユーザー判断）

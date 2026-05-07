@@ -1,0 +1,61 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr comment *)",
+      "Bash(gh repo view *)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)",
+      "Bash(gh api repos/*/pulls/*/reviews *)",
+      "Bash(git diff *)",
+      "Bash(git branch *)",
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(git fetch *)",
+      "Bash(ls *)",
+      "Bash(docker ps *)",
+      "Bash(docker logs *)",
+      "Bash(grep *)",
+      "Bash(bash .claude/skills/code-review/post-inline-comments.sh *)",
+      "Bash(./.claude/skills/code-review/post-inline-comments.sh *)",
+      "Bash(go test *)",
+      "Bash(make *)",
+      "Bash(go generate *)",
+      "Bash(go build *)",
+      "Bash(find *)",
+      "Bash(wc *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(touch *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rmdir *)"
+    ],
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(rm *)",
+      "Bash(git stash *)",
+      "Bash(git push origin main)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git reset *)",
+      "Bash(git rebase *)",
+      "Bash(docker system prune *)"
+    ],
+    "ask": [
+      "Bash(gh pr create *)",
+      "Bash(gh issue create *)",
+      "Bash(git push *)",
+      "Bash(docker compose up *)",
+      "Bash(docker compose down *)"
+    ]
+  },
+  "enabledPlugins": {
+    "example-skills@anthropic-agent-skills": true
+  }
+}
