@@ -1,7 +1,8 @@
 # ペルソナ定義 — Sloth Feed
 
-> **本ドキュメントの前提（2026-05-09 更新）**
-> Issue #5 帰着により、投稿対象は **真の怠惰・無為・サボり** と **小さな善行** の**両方を等しく扱う**。「立派な小さな善行だけ称賛」（旧フレーム）と「ダメ全振り」のどちらにも偏らない。詳細は [`docs/ideation/customer_insights.md`](../../../docs/ideation/customer_insights.md) を参照。
+> 最新版：2026-05-09 / 改訂履歴は [`audit.md`](../../audit.md) と [`aidlc-state.md`](../../aidlc-state.md) を参照。
+>
+> 投稿対象は **真の怠惰・無為・サボり** と **小さな善行** の**両方を等しく扱う**。詳細は [`docs/ideation/customer_insights.md`](../../../docs/ideation/customer_insights.md) を参照。
 
 ---
 

@@ -1,7 +1,7 @@
 # 要件検証質問 — Sloth Feed（3回目サイクル）
 
 > **本ドキュメントの位置づけ**
-> AI-DLC 3回目サイクル（2026-05-09 開始・正式再構成・各ステージで人間レビュー）の Stage 2: Requirements Analysis における**検証記録**。既存 `requirements.md`（PR #9 までの2回目サイクル成果物）を入力として、6軸（機能要件 / 非機能要件 / ユーザーシナリオ / ビジネスコンテキスト / 技術コンテキスト / 品質属性）で完全性を評価し、修正・追加判断を行った。
+> AI-DLC 3回目サイクル（2026-05-09 開始・正式再構成・各ステージで人間レビュー）の Stage 2: Requirements Analysis における**検証記録**。既存 `requirements.md`を入力として、6軸（機能要件 / 非機能要件 / ユーザーシナリオ / ビジネスコンテキスト / 技術コンテキスト / 品質属性）で完全性を評価し、修正・追加判断を行った。
 >
 > AI-DLC ルール（`.aidlc-rule-details/inception/requirements-analysis.md` ステップ6）に従い `requirement-verification-questions.md` 命名規約で作成。
 >
