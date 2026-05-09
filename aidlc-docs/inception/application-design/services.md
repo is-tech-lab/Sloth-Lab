@@ -1,7 +1,6 @@
 # サービス定義 — Sloth Feed
 
-> **本ドキュメントの位置づけ（2026-05-09 更新・3回目サイクル検証済）**
-> 1回目サイクルで作成。3回目サイクルで AuthService を Auth.js + Cognito に置換、AINamakemonoService 改名。
+> 最新版：2026-05-09 / 改訂履歴は [`audit.md`](../../audit.md) と [`aidlc-state.md`](../../aidlc-state.md) を参照。
 
 ## サービスレイヤーの役割
 
@@ -35,33 +34,6 @@ createPost(authorId, content)
 ```
 
 **依存サービス**: AIFilteringService, AICommentService, PostRepository
-
----
-
-## AuthService — **3回目サイクルで廃止**
-
-Auth.js + AWS Cognito Provider 移行に伴い、自前の `AuthService` クラスは不要となった。代わりにプロジェクトルートの `auth.ts` が認証エントリポイントとなる。
-
-### 新しい認証フロー
-
-```
-登録（PoC 実装時に UI 形態決定：Cognito Hosted UI / 自前フォーム）
-  ├─[1] クライアントが signIn("cognito") または Hosted UI へリダイレクト
-  ├─[2] Auth.js が /api/auth/[...nextauth] で OAuth/OIDC フロー開始
-  ├─[3] Cognito User Pool でユーザー作成（email + password + custom:name）
-  ├─[4] Cognito が ID トークン + Access トークン + Refresh トークン発行
-  └─[5] Auth.js が JWT 検証 + Session callback + HttpOnly Cookie 書き込み
-
-ログイン
-  ├─[1] クライアントが signIn("cognito")
-  ├─[2] Auth.js が Cognito の InitiateAuth フロー開始
-  ├─[3] Cognito が認証検証
-  └─[4] Auth.js が Session を Cookie に書き込み
-```
-
-**依存**: `next-auth` v5, `next-auth/providers/cognito`
-
-→ 詳細は `component-methods.md` の「Authentication & Identity Flow」セクション参照
 
 ---
 
@@ -117,7 +89,6 @@ getUserPosts(authorId, limit, lastKey?)
 
 | サービス | 外部依存 | ビジネスロジック | オーケストレーション |
 |---------|---------|----------------|-----------------|
-| ~~AuthService~~ | ~~UserRepository, bcrypt, JWT~~ | ~~認証ルール~~ | **3回目サイクルで廃止 → Auth.js + Cognito** |
 | PostService | AIFilteringService, AINamakemonoService, PostRepository | なし（委譲のみ） | ○（コアフロー） |
 | FeedService | PostRepository | なし | △（委譲のみ） |
 | AIFilteringService | Amazon Bedrock（Claude）| フィルタリング判定 | なし |
@@ -133,7 +104,6 @@ getUserPosts(authorId, limit, lastKey?)
 | `AWS_REGION` | AWS リージョン（Bedrock・DynamoDB 共通）|
 | `BEDROCK_MODEL_ID` | 利用する Claude モデル ID（例：`anthropic.claude-3-5-sonnet-20241022-v2:0` または最新版）|
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` または IAM ロール | 開発時はキー、本番ではタスクロール／インスタンスロール推奨 |
-| ~~`DYNAMODB_USERS_TABLE`~~ | **3回目サイクルで PoC 外**（Cognito 一本化）|
 | `DYNAMODB_POSTS_TABLE` | Posts テーブル名 |
 | `COGNITO_USER_POOL_ID` | Cognito ユーザープール ID |
 | `COGNITO_APP_CLIENT_ID` | Cognito App Client ID |

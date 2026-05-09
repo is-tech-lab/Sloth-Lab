@@ -1,7 +1,6 @@
 # コンポーネント依存関係 — Sloth Feed
 
-> **本ドキュメントの位置づけ（2026-05-09 更新・3回目サイクル検証済）**
-> 1回目サイクルで作成。2回目・3回目サイクルで AINamakemonoService 改名・aiCitationSource/pathway/authorName 追加・UserHistory 連携などを反映。
+> 最新版：2026-05-09 / 改訂履歴は [`audit.md`](../../audit.md) と [`aidlc-state.md`](../../aidlc-state.md) を参照。
 
 ## 依存関係マトリクス
 
@@ -156,12 +155,6 @@ PostRepository.findByAuthorId(authorId, limit, lastKey?)
 ---
 
 ## DynamoDB テーブル設計
-
-### Users テーブル（**3回目サイクルで PoC 外**）
-
-Cognito User Pool 一本化により、Sloth Feed 側の DynamoDB Users テーブルは **PoC では作成しない**。
-- User データは Cognito が管理（sub / email / custom:name / passwordHash / createdAt）
-- Phase 2 で Sloth Feed 固有メタデータが必要になれば `{ userId: Cognito sub, ... }` の補助テーブルを追加検討
 
 ### Posts テーブル
 

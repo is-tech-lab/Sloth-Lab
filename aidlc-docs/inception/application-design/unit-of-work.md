@@ -2,13 +2,13 @@
 
 > **本ドキュメントの前提（2026-05-09 更新）**
 > Issue #5 帰着により、Sloth Feed は IP事業として位置づけ直された。
-> **3ユニットの構造変更はない**が、各ユニットの**責務・意味を「動的IP × AI技術」文脈で再記述**している。3回目サイクル（2026-05-09）で FR-009/010/011（依存防止・老師人格・経路ラベル）・新型（Pathway / NamakemonoResponse）・US-009 切り上げ提案・Posts スキーマ追加（pathway / authorName）を反映。
+> 最新版：2026-05-09 / 改訂履歴は [`audit.md`](../../audit.md) と [`aidlc-state.md`](../../aidlc-state.md) を参照。
 
 ---
 
 ## 構成（変更なし）
 
-| Unit | 名称（旧 → 新）| 開発順序 |
+| Unit | 名称 | 開発順序 |
 |------|------|---------|
 | Unit 1 | 認証（Auth）→ **Auth + IPファン識別基盤** | 1番目 |
 | Unit 2 | 投稿 + AI（Post + AI）→ **ナマケモノ対話エンジン** | 2番目 |
@@ -21,7 +21,7 @@
 **スコープ**: Next.js プロジェクト初期化 + **Cognito User Pool セットアップ** + **Auth.js (NextAuth v5) 設定** + 共通基盤
 **意味的位置づけ**：**IP のファン識別装置**。ユーザーは商品ではなくファンとして登録され、個別化されたナマケモノとの関係性が始まる起点。
 
-**3回目サイクルで Auth.js + Cognito 移行**：自前の AuthService / UserRepository / bcrypt / JWT 発行は廃止。`auth.ts` 設定 + Cognito User Pool に置換（詳細は `component-methods.md` の「Authentication & Identity Flow」セクション参照）。
+認証は Auth.js (NextAuth v5) + Cognito User Pool（OAuth/OIDC）。詳細は `component-methods.md` の「Authentication & Identity Flow」セクション参照。
 
 ### 含まれる機能
 
@@ -87,10 +87,10 @@ app/auth/...                             # PoC 実装時に決定：Cognito Host
 **意味的位置づけ**：**動的IPの本体**。AI ナマケモノが、**LLM の学習済み知識**と個別化記憶を駆使して、ユーザーごとに異なるナマケモノとの関係性を生み出す。**Sloth Feed のコア体験**を実装するユニット。Phase 2 で S3 + Agentic Search による引用検証を予定（FR-007 参照）。
 
 **統合経緯（Unit 2 + Unit 3 → Unit 2）**：
-1回目サイクル時点の `execution-plan.md` 旧版では Unit 2（投稿 + AIフィルタリング）と Unit 3（AIコメント生成）を**別ユニット**として計画していた。しかし Units Generation 段階の `unit-of-work-plan.md` 質問1 で**統合決定**（B 回答）：
+当初は Unit 2（投稿 + AIフィルタリング）と Unit 3（AIコメント生成）を**別ユニット**として計画していたが、Units Generation 段階の `unit-of-work-plan.md` 質問1 で**統合決定**（B 回答）：
 > PostService は内部で AIFilteringService と AINamakemonoService を**同じリクエスト内で連続して呼び出す**設計のため、Unit を分割して stub/mock を挟む意義が薄い。**部分失敗のハンドリング**（filtering_excluded / ai_generation_failed / persistence_failed）も同一フロー内で扱うのが自然。
 
-→ 結果として 4ユニット → 3ユニット に集約。後続の2回目・3回目サイクルでもこの統合判断は維持され、**Unit 2 が動的IPの核として 5 ストーリー（US-003/004/005/006/009）を担当する責務集中ユニット**になっている。
+→ 結果として 4ユニット → 3ユニット に集約され、**Unit 2 が動的IPの核として 5 ストーリー（US-003/004/005/006/009）を担当する責務集中ユニット**となっている。
 
 ### 含まれる機能
 
@@ -116,14 +116,14 @@ app/auth/...                             # PoC 実装時に決定：Cognito Host
 ```
 lib/repositories/post.repository.ts
 lib/services/ai-filtering.service.ts
-lib/services/ai-namakemono.service.ts          # 旧 ai-comment.service.ts を改名・拡張
+lib/services/ai-namakemono.service.ts          # 動的IPの対話エンジン
 lib/memory/user-history.ts                     # 新規：個別化記憶（FR-006）+ 活動メトリクス（FR-009）
 lib/services/post.service.ts
 app/api/posts/route.ts
 app/(main)/post/page.tsx
 components/PostForm.tsx
 components/FilteringFeedback.tsx
-components/NamakemonoBubble.tsx                # 旧 AICommentBubble を改名
+components/NamakemonoBubble.tsx                # AI ナマケモノコメントの吹き出し
 components/LoadingSpinner.tsx
 ```
 
@@ -213,26 +213,3 @@ Unit 1（Auth + IPファン識別）
 | `lib/services/post.service.ts` | Unit 2 | ダメ投稿オーケストレーション |
 | `lib/services/feed.service.ts` | Unit 3 | フィード取得 |
 | `components/BrandFrame.tsx` | Unit 3 | **サンドイッチUI 上下フレーム** |
-
----
-
-## 旧版からの主な変更点
-
-**構造変更**：なし。3ユニットの境界・依存関係は維持（1回目→2回目→3回目すべてで保持）。
-
-**意味的変更**：
-
-| Unit | 旧の責務 | 新の責務（動的IP × AI 観点）|
-|---|---|---|
-| Unit 1 | 認証 | **IPファン識別基盤** |
-| Unit 2 | 投稿 + AI | **ナマケモノ対話エンジン**（動的IPの核：AIキャラ人格 + LLM 学習済み引用 + 個別化記憶。Phase 2 で S3 Agentic Search 拡張）|
-| Unit 3 | フィード | **共同体タイムライン**（サンドイッチUI でブランド構文を空間化）|
-
-**新規追加要素**（既存ユニット内・3回目サイクルまで）：
-
-- Unit 1: **Auth.js + Cognito User Pool 移行**（自前 AuthService / UserRepository / bcrypt / JWT 廃止）。`auth.ts` 新規、`middleware.ts` を Auth.js auth 委譲に。Cognito カスタム属性 `custom:name` で表示名管理
-- Unit 2: `lib/memory/`（個別化記憶 FR-006 + 活動メトリクス FR-009）。**達観した怠惰の老師人格**（FR-010）の System Prompt 固定。**5経路紐付け + 経路ラベル**（FR-003/011）。**依存防止切り上げ**（FR-009 / US-009）。引用は LLM の学習済み知識を信用（PoC）。Phase 2 で `lib/agents/`（S3 Agentic Search ツール）追加予定。CreatePostResult を部分失敗 enum に拡張
-- Unit 3: `components/BrandFrame.tsx`（サンドイッチUI）
-- Posts スキーマ：`aiCitationSource` / `pathway` / `authorName` 追加、`stamps` 削除
-- **JWT 保存**：Auth.js の HttpOnly Cookie（XSS 耐性、PoC からセキュア）
-- **Users テーブル**：PoC では作成しない（Cognito 一本化）

@@ -1,10 +1,6 @@
 # ユニット依存関係マトリクス — Sloth Feed
 
-> **本ドキュメントの位置づけ（2026-05-09 更新・3回目サイクル検証済）**
-> 1回目サイクルで作成。3回目サイクルで以下を反映：
-> - Unit 2 内に UserHistory（lib/memory/）追加
-> - Unit 3 内に BrandFrame（components/）追加
-> - **Auth.js + Cognito 移行**：UserRepository を PoC 外、Auth.js + Cognito を外部依存として追加
+> 最新版：2026-05-09 / 改訂履歴は [`audit.md`](../../audit.md) と [`aidlc-state.md`](../../aidlc-state.md) を参照。
 
 ## 依存関係マトリクス
 
@@ -15,12 +11,6 @@
 | **Unit 3 (Feed)** | **○** | **○** | — |
 
 - **○** = 依存あり（先に完了している必要がある）
-
-**3回目サイクル更新（2026-05-09）**：
-- **Auth.js + Cognito 移行**（中盤の追加）：UserRepository を PoC 外に。authorName は API Route で `session.user.name`（Auth.js Session）から取得して PostService に渡す
-- Unit 2 内に `UserHistory`（lib/memory/）が新規追加、Unit 2 内部で完結
-- Unit 3 内に `BrandFrame`（components/）が新規追加、Unit 3 内部で完結
-- **ユニット間依存マトリクスのセル配置は変更なし**
 
 ---
 
@@ -33,7 +23,6 @@
 | `lib/types/index.ts` | `User`, `Post`, `FilterResult`, `CreatePostResult`, `Pathway`, `NamakemonoResponse`, `AuthResult` 等の型定義を利用 |
 | `lib/db/client.ts` | DynamoDB クライアントシングルトンを利用 |
 | `lib/utils/errors.ts` | 共通エラーハンドリングを利用 |
-| ~~`lib/repositories/user.repository.ts`~~ | **3回目サイクル後段で PoC 外**。authorName は API Route が `session.user.name` から取得して PostService に渡す |
 | `auth.ts` (Auth.js) | API Route で `await auth()` してセッション取得、`session.user.id` / `session.user.name` を利用 |
 | `middleware.ts` | `POST /api/posts` の Auth.js 認証保護に依存（保護ルートとして matcher 設定）|
 
@@ -43,7 +32,6 @@
 |---------|------|
 | `lib/types/index.ts` | `Post` 型（`authorName` / `pathway` / `aiCitationSource` 含む）等を利用 |
 | `lib/db/client.ts` | DynamoDB クライアントを利用 |
-| ~~`lib/repositories/user.repository.ts`~~ | **3回目サイクル後段で PoC 外**。PoC では Post.authorName で表示する（authorId ではない）|
 | `auth.ts` (Auth.js) | `/my-posts` ページガード・`GET /api/my-posts` で `await auth()` |
 | `middleware.ts` | `GET /api/my-posts` / `/my-posts` の Auth.js 認証保護に依存（保護ルートとして matcher 設定）|
 
@@ -80,8 +68,6 @@ Unit 3 開始可能
 | DynamoDB クライアント (`lib/db/client.ts`) | Unit 1 | Unit 2, Unit 3 |
 | 共有型定義 (`lib/types/index.ts`) | Unit 1 | Unit 2, Unit 3 |
 | エラーユーティリティ (`lib/utils/errors.ts`) | Unit 1 | Unit 2, Unit 3 |
-| ~~Users テーブル~~ | **3回目サイクルで PoC 外**（Cognito 一本化）|
-| ~~`UserRepository`~~ | **3回目サイクルで PoC 外**（Cognito 一本化）|
 | **Cognito User Pool** | Unit 1（セットアップ）| Unit 2（API Route が `session.user.name` 取得）/ Unit 3（同上、`/my-posts` ガード）|
 | **`auth.ts` (Auth.js)** | Unit 1 | Unit 2（API Route で `await auth()`）/ Unit 3（同上）|
 | **`UserHistory`** (`lib/memory/user-history.ts`) | **Unit 2** | Unit 2 内で AINamakemonoService が利用（FR-006 個別化記憶 + FR-009 活動メトリクス）|

@@ -1,7 +1,6 @@
 # バージョン管理レビュー — Sloth Feed PoC
 
-> **本ドキュメントの位置づけ（2026-05-09 作成・3回目サイクル Stage 7 クローズ後の補完）**
-> 3回目サイクルで確定した技術選択（Next.js / Auth.js / AWS SDK / React / Node.js / TypeScript）に対し、**2024〜2025 年の実インシデント事例**を踏まえてバージョン管理戦略を評価する。`security-review.md` の **A06 Vulnerable Components** を深掘りする補完成果物。
+> 確定した技術選択（Next.js / Auth.js / AWS SDK / React / Node.js / TypeScript）に対し、**2024〜2025 年の実インシデント事例**を踏まえてバージョン管理戦略を評価する。`security-review.md` の **A06 Vulnerable Components** を深掘りする補完成果物。
 >
 > **対象範囲**：採用パッケージのバージョン選定・ピン留め戦略・CI チェック・サプライチェーン耐性。
 > **対象外**：個別 CVE の網羅・依存ツリー全体の SBOM 作成（実装時に行う）。

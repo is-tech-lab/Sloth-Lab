@@ -1,7 +1,6 @@
 # 技術選択のセキュリティレビュー — Sloth Feed PoC
 
-> **本ドキュメントの位置づけ（2026-05-09 作成・3回目サイクル Stage 7 クローズ直前）**
-> 3回目サイクルで確定した技術選択（Auth.js + AWS Cognito / Bedrock 経由 Claude / DynamoDB / Next.js App Router）に対し、**PoC スコープでの**セキュリティ妥当性を評価する。実装時に再点検すべき項目と Phase 2 で対応する項目を明記する。
+> 確定した技術選択（Auth.js + AWS Cognito / Bedrock 経由 Claude / DynamoDB / Next.js App Router）に対し、**PoC スコープでの**セキュリティ妥当性を評価する。実装時に再点検すべき項目と Phase 2 で対応する項目を明記する。
 >
 > **対象範囲**：技術選定そのものの是非・既知の落とし穴・PoC で守るべき最低ライン。
 > **対象外**：詳細な脅威モデリング・侵入テスト・コンプライアンス監査（これらは CONSTRUCTION フェーズ以降）。
@@ -223,7 +222,7 @@ Issue #5 帰着で確定した原則：
 | R-3 | Auth.js / Cognito の設定ミス（保護ルート漏れ）| 低 | 高 | middleware の matcher を Code Review でチェック |
 | R-4 | 依存パッケージの脆弱性 | 中 | 中 | `npm audit` を CI に組み込む |
 | R-5 | Bedrock IAM ポリシーが過剰 | 低 | 中 | `bedrock:InvokeModel` のみ許可・モデル ARN を絞る |
-| R-6 | DynamoDB スキャンでパフォーマンス低下（DoS 類似）| 中 | 中 | PoC は 50件上限・Phase 2 で GSI 設計（W-4 起源）|
+| R-6 | DynamoDB スキャンでパフォーマンス低下（DoS 類似）| 中 | 中 | PoC は 50件上限・Phase 2 で GSI 設計|
 | R-7 | ハルシネーションによる偽引用 | 中 | 中（信頼毀損）| 出典明記（aiCitationSource）+ Phase 2 で事実検証 |
 
 ---
