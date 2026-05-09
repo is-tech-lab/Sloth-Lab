@@ -1,4 +1,15 @@
-# アプリケーション設計計画 — Sloth Feed
+# アプリケーション設計計画 — Sloth Feed（1回目サイクル・履歴文書）
+
+> **本ドキュメントの位置づけ**
+> 1回目サイクル（2026-05-07）の Application Design 段階で、コンポーネント識別・サービスレイヤー設計・DynamoDB アクセスパターン等を確定するために実施した質問記録。**全質問は回答済**で、結果は `application-design/` 配下のファイル群に反映されている。
+>
+> **後続サイクルでの上書き履歴**：
+> - **2回目サイクル（2026-05-09）**：Issue #5 帰着により AICommentService → **AINamakemonoService** に改名・拡張（個別化記憶・5経路・人格設計）
+> - **3回目サイクル（2026-05-09）**：Bedrock 経由統一、引用ソース戦略（PoC: LLM 信用 / Phase 2: S3 + Agentic Search）、人格「達観した怠惰の老師」確定、`lib/rag/` 削除
+>
+> 履歴の記録として保持。最新の設計は `application-design/application-design.md` を参照。
+
+---
 
 ## 生成チェックリスト
 

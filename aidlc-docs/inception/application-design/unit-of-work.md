@@ -2,7 +2,7 @@
 
 > **本ドキュメントの前提（2026-05-09 更新）**
 > Issue #5 帰着により、Sloth Feed は IP事業として位置づけ直された。
-> **3ユニットの構造変更はない**が、各ユニットの**責務・意味を「動的IP × AI技術」文脈で再記述**している。
+> **3ユニットの構造変更はない**が、各ユニットの**責務・意味を「動的IP × AI技術」文脈で再記述**している。3回目サイクル（2026-05-09）で FR-009/010/011（依存防止・老師人格・経路ラベル）・新型（Pathway / NamakemonoResponse）・US-009 切り上げ提案・Posts スキーマ追加（pathway / authorName）を反映。
 
 ---
 
@@ -18,16 +18,22 @@
 
 ## Unit 1 — Auth + IPファン識別基盤
 
-**スコープ**: Next.js プロジェクト初期化 + メール・パスワード認証 + 共通基盤
+**スコープ**: Next.js プロジェクト初期化 + **Cognito User Pool セットアップ** + **Auth.js (NextAuth v5) 設定** + 共通基盤
 **意味的位置づけ**：**IP のファン識別装置**。ユーザーは商品ではなくファンとして登録され、個別化されたナマケモノとの関係性が始まる起点。
+
+**3回目サイクルで Auth.js + Cognito 移行**：自前の AuthService / UserRepository / bcrypt / JWT 発行は廃止。`auth.ts` 設定 + Cognito User Pool に置換（詳細は `component-methods.md` の「Authentication & Identity Flow」セクション参照）。
 
 ### 含まれる機能
 
 - Next.js 14+ App Router プロジェクトのスキャフォールディング
-- メールアドレス＋パスワードによるユーザー登録
-- ログイン・JWT 発行・JWT 検証ミドルウェア
-- DynamoDB Users テーブルの作成
+- **AWS Cognito User Pool セットアップ**（カスタム属性 `custom:name` 含む、自動メール検証 OFF は PoC 設定）
+- **Auth.js (NextAuth v5) 設定**（`auth.ts` + `app/api/auth/[...nextauth]/route.ts`）
+- **Cognito Provider 経由の登録・ログイン**フロー（OAuth/OIDC）
+- **middleware.ts** で Auth.js の `auth` を default export し、保護対象パスを matcher で指定
+- **app/providers.tsx** で SessionProvider 適用
 - `lib/` 共通モジュールの初期化（後続ユニットで再利用）
+
+→ **DynamoDB Users テーブルは作成しない**（Cognito 一本化、Phase 2 で補助テーブル検討）
 
 ### 生成するファイル
 
@@ -37,53 +43,71 @@ package.json
 tsconfig.json
 next.config.ts
 .env.local.example
+app/layout.tsx               # Next.js App Router root layout
+app/globals.css              # 全画面共通スタイル
+app/providers.tsx            # 新規：SessionProvider（Auth.js）等を集約
 ```
 
 **共通モジュール（後続ユニットが再利用）**
 ```
-lib/types/index.ts            # 共有型定義（User, Post, FilterResult, Citation 等）
+lib/types/index.ts            # 共有型定義（User, Post, FilterResult, Pathway, NamakemonoResponse, AuthResult 等）
 lib/db/client.ts              # DynamoDB クライアントシングルトン
 lib/utils/errors.ts           # エラーハンドリングユーティリティ
 ```
 
-**Auth モジュール**
+**認証モジュール（Auth.js + Cognito）**
 ```
-lib/repositories/user.repository.ts
-lib/services/auth.service.ts
-app/api/auth/register/route.ts
-app/api/auth/login/route.ts
-app/auth/login/page.tsx
-app/auth/register/page.tsx
-components/AuthForm.tsx
-middleware.ts
+auth.ts                                  # 新規：Auth.js (NextAuth v5) 設定（Cognito Provider）
+app/api/auth/[...nextauth]/route.ts      # Auth.js のルートハンドラ（auth.ts から GET/POST を再エクスポート）
+middleware.ts                            # Auth.js の auth を default export、matcher 設定
+components/AuthForm.tsx                  # PoC 実装時に決定（Hosted UI 利用なら不要）
+app/auth/...                             # PoC 実装時に決定：Cognito Hosted UI / 自前ページ
 ```
 
 ### DynamoDB テーブル
-- **Users** テーブル（PK: userId、GSI: email-index）
+- **PoC では Users テーブルは作成しない**（Cognito User Pool 一本化）
+- Phase 2 で Sloth Feed 固有メタデータが必要になれば `{ userId: Cognito sub, ... }` 形式の補助テーブル追加検討
 
 ### 完了基準
-- `POST /api/auth/register` でユーザー（IPファン）を作成できる
-- `POST /api/auth/login` で JWT を取得できる
-- `middleware.ts` が保護ルートで JWT を検証し、`x-user-id` ヘッダを付与する
+- **Cognito User Pool が PoC 設定で作成されている**（カスタム属性 `custom:name`、自動メール検証 OFF）
+- **Auth.js (NextAuth v5)** が `auth.ts` + `/api/auth/[...nextauth]` で設定済み
+- `signIn("cognito")` でログインフローが起動する
+- 登録フロー（PoC 実装時に決定：Cognito Hosted UI / 自前フォーム）でユーザー作成 → ログイン状態になる
+- **`useSession()` でクライアント側から `{ id, name }` を取得できる**（`session.user.id` = Cognito sub、`session.user.name` = `custom:name`）
+- **API Route で `await auth()`** すると同様に `{ id, name }` が取得できる
+- **`middleware.ts`** が matcher 指定の保護ルート（`/api/posts`, `/api/my-posts`, `/post`, `/my-posts`）で Auth.js の認証を強制する
+- **HttpOnly Cookie** にセッションが保存される（localStorage には JWT を保存しない）
+- **DynamoDB Users テーブルが作成されていない**（PoC では Cognito 一本化、Phase 2 で再導入検討）
 
 ---
 
 ## Unit 2 — ナマケモノ対話エンジン（動的IPの核）
 
-**スコープ**: ダメ投稿フロー全体（フィルタリング → AIナマケモノ対話 → 保存）
-**意味的位置づけ**：**動的IPの本体**。AI ナマケモノが、RAG引用ライブラリと個別化記憶を駆使して、ユーザーごとに異なるナマケモノとの関係性を生み出す。**Sloth Feed のコア体験**を実装するユニット。
+**スコープ**: 「仕事じゃないけど」投稿フロー全体（フィルタリング → AIナマケモノ対話 → 保存）
+**意味的位置づけ**：**動的IPの本体**。AI ナマケモノが、**LLM の学習済み知識**と個別化記憶を駆使して、ユーザーごとに異なるナマケモノとの関係性を生み出す。**Sloth Feed のコア体験**を実装するユニット。Phase 2 で S3 + Agentic Search による引用検証を予定（FR-007 参照）。
+
+**統合経緯（Unit 2 + Unit 3 → Unit 2）**：
+1回目サイクル時点の `execution-plan.md` 旧版では Unit 2（投稿 + AIフィルタリング）と Unit 3（AIコメント生成）を**別ユニット**として計画していた。しかし Units Generation 段階の `unit-of-work-plan.md` 質問1 で**統合決定**（B 回答）：
+> PostService は内部で AIFilteringService と AINamakemonoService を**同じリクエスト内で連続して呼び出す**設計のため、Unit を分割して stub/mock を挟む意義が薄い。**部分失敗のハンドリング**（filtering_excluded / ai_generation_failed / persistence_failed）も同一フロー内で扱うのが自然。
+
+→ 結果として 4ユニット → 3ユニット に集約。後続の2回目・3回目サイクルでもこの統合判断は維持され、**Unit 2 が動的IPの核として 5 ストーリー（US-003/004/005/006/009）を担当する責務集中ユニット**になっている。
 
 ### 含まれる機能
 
-- ダメ投稿テキスト入力フォーム（「仕事じゃないけど」prefix 強制なし）
-- Claude API による**仕事系投稿フィルタリング**（仕事の成果・旅行・充実投稿を除外）
-- フィルタリング除外時の理由表示（「ここはダメを誇る場所です」）
+- 「**仕事じゃないけど**」投稿テキスト入力フォーム（**怠惰系・善行系両方を受容**、prefix 強制なし）
+- **Amazon Bedrock 経由の Claude** による**仕事系投稿フィルタリング**（仕事の成果・旅行・充実投稿を除外）
+- フィルタリング除外時の理由表示（例：「**仕事の成果はここでは扱いません。Sloth Feed は『仕事じゃないあなた』の場所です**」）
 - フィルタリング通過後の **AI ナマケモノ対話**：
-  - **RAG 引用ライブラリ**（Larry Wall・ラッセル・老子・ニュートン・フレミング等）から引用検索
-  - **ユーザーの過去投稿履歴**（個別化記憶）を AI コンテキストに含める
-  - **ナマケモノキャラクター人格**を System Prompt で固定
-  - **出典明記**（ハルシネーション対策）
-- ダメ投稿 + AI コメント + 引用元の DynamoDB 保存
+  - **「達観した怠惰の老師」人格**（FR-010）を System Prompt で固定（説教・押し付け・馴れ合い禁止）
+  - **5経路（過剰生産抵抗 / 創造の余白 / 多様性保護 / 自己への暴力停止 / 集積による文化変容）のいずれかに紐付け**（FR-003 / FR-011）
+  - **LLM の学習済み知識**から引用を生成（PoC は Bedrock Claude の事前学習を信用、Phase 2 で S3 + Agentic Search に拡張）
+  - **個別化記憶**（FR-006）：UserHistory が過去投稿を取得して System Prompt に組み込む
+  - **依存防止切り上げ提案**（FR-009 / US-009）：UserHistory.getActivityMetrics で連続投稿数・滞在時間を取得し、閾値超過時に老師人格で切り上げ提案
+  - **出典明記**：PoC では LLM の自己申告（Phase 2 で事実検証）
+- 投稿カードの **経路ラベル【経路X】表示**（FR-011）
+- 投稿時に **authorName を User からスナップショット保存**（denormalization）
+- 投稿 + AI コメント + 引用元 + 経路 + authorName を DynamoDB に保存
+- 部分失敗ハンドリング（CreatePostResult enum：filtering_excluded / ai_generation_failed / persistence_failed）
 
 ### 前提条件
 - Unit 1 完了（認証・`lib/` 共通モジュール・DynamoDB クライアント利用可能）
@@ -93,9 +117,7 @@ middleware.ts
 lib/repositories/post.repository.ts
 lib/services/ai-filtering.service.ts
 lib/services/ai-namakemono.service.ts          # 旧 ai-comment.service.ts を改名・拡張
-lib/rag/citations.json                         # 新規：偉人引用データベース
-lib/rag/retriever.ts                           # 新規：引用検索ロジック
-lib/memory/user-history.ts                     # 新規：個別化記憶
+lib/memory/user-history.ts                     # 新規：個別化記憶（FR-006）+ 活動メトリクス（FR-009）
 lib/services/post.service.ts
 app/api/posts/route.ts
 app/(main)/post/page.tsx
@@ -107,14 +129,20 @@ components/LoadingSpinner.tsx
 
 ### DynamoDB テーブル
 - **Posts** テーブル（PK: postId、GSI: authorId-createdAt-index）
-- スキーマ変更：`stamps` フィールド削除、`aiCitationSource` フィールド追加
+- スキーマ変更：`stamps` フィールド削除、`aiCitationSource` / `pathway` / `authorName` フィールド追加（Stage 5 で確定）
 
 ### 完了基準
-- `POST /api/posts` に「**布団から3時間出られなかった**」を送ると Claude がフィルタリング判定する
-- 仕事の成果・旅行投稿が 422（「ダメを誇る場所です」のメッセージ付き）で返される
-- 「布団から3時間出られなかった」のような**真のダメ投稿**が通過し、AI ナマケモノが**Larry Wall や老子の引用付き**で肯定コメントを生成する
-- AI コメントには**出典が明記**される
-- ユーザーごとに個別化された応答が生成される
+- `POST /api/posts` に「**布団から3時間出られなかった**」（怠惰系）を送ると Bedrock Claude がフィルタリング判定し通過する
+- 「**彼に洗い物しといた**」（善行系）も**等しく通過**する
+- 仕事の成果・旅行投稿が 422 で返される（メッセージ：「**仕事の成果はここでは扱いません。Sloth Feed は『仕事じゃないあなた』の場所です**」）
+- 通過した投稿に対し、AI ナマケモノが**「達観した怠惰の老師」人格**（FR-010）で応答する：
+  - 5経路のいずれかに紐付ける（FR-011 経路ラベル付き）
+  - Larry Wall・ラッセル・老子・ケインズ等の引用を生成（LLM 自己申告）
+  - 出典が明記される
+- 連続投稿5件以上 / 滞在30分以上で**切り上げ提案**が出る（FR-009 / US-009）
+- ユーザーごとに個別化された応答が生成される（過去投稿を参照、FR-006）
+- DynamoDB Posts テーブルに `aiCitationSource` / `pathway` / `authorName` が保存される
+- **🦥 はヘッダラベルにのみ使用、本文には入れない**（FR-010）
 
 ---
 
@@ -125,9 +153,9 @@ components/LoadingSpinner.tsx
 
 ### 含まれる機能
 
-- 全ユーザーのダメ投稿タイムライン（新しい順、未ログインで閲覧可能）
-- 自分の過去ダメ投稿一覧（ログイン必須）
-- 各投稿に **AI ナマケモノコメント + 引用元** を表示
+- 全ユーザーの「**仕事じゃないけど**」投稿タイムライン（新しい順、未ログインで閲覧可能、PoC では最近 50件まで）
+- 自分の過去「仕事じゃないけど」投稿一覧（ログイン必須）
+- 各投稿に **AI ナマケモノコメント + 経路ラベル【経路X】 + 引用元 + authorName** を表示
 - **サンドイッチUI構造**：投稿カード上下に「仕事じゃないけど」「これが世の中を変える」のブランドフレームが常に表示される
 
 ### 前提条件
@@ -147,10 +175,13 @@ components/BrandFrame.tsx          # 新規：サンドイッチUIの上下フ�
 ```
 
 ### 完了基準
-- `GET /api/feed` が未認証でもタイムラインを返す
-- `GET /api/my-posts` が JWT 必須で自分のダメ投稿一覧を返す
-- タイムラインページ（`/`）が**サンドイッチUI**で表示される
+- `GET /api/feed` が未認証でもタイムライン（怠惰系・善行系混在）を返す（PoC 最近 50件）
+- `GET /api/my-posts` が JWT 必須で自分の「仕事じゃないけど」投稿一覧を返す
+- タイムラインページ（`/`）が**サンドイッチUI**で表示される（BrandFrame 上下フレーム）
+- 各投稿に **🦥 ヘッダラベル + 【経路X】 + 引用元** が表示される
+- **authorName** が表示される（authorId ではない）
 - いいね数・フォロワー数・ランキングが**一切表示されない**
+- **ビジョン「『仕事じゃないけど、、、』が世の中を変える」**が UI を通じて伝わる
 
 ---
 
@@ -178,8 +209,7 @@ Unit 1（Auth + IPファン識別）
 | `lib/repositories/post.repository.ts` | Unit 2 | Posts テーブルアクセス |
 | `lib/services/ai-filtering.service.ts` | Unit 2 | 仕事系投稿の弾き |
 | `lib/services/ai-namakemono.service.ts` | Unit 2 | **動的IP対話エンジン** |
-| `lib/rag/` | Unit 2 で初期化 | **RAG 引用ライブラリ** |
-| `lib/memory/` | Unit 2 で初期化 | **個別化記憶** |
+| `lib/memory/` | Unit 2 で初期化 | **個別化記憶（FR-006）+ 活動メトリクス（FR-009）** |
 | `lib/services/post.service.ts` | Unit 2 | ダメ投稿オーケストレーション |
 | `lib/services/feed.service.ts` | Unit 3 | フィード取得 |
 | `components/BrandFrame.tsx` | Unit 3 | **サンドイッチUI 上下フレーム** |
@@ -188,18 +218,21 @@ Unit 1（Auth + IPファン識別）
 
 ## 旧版からの主な変更点
 
-**構造変更**：なし。3ユニットの境界・依存関係は維持。
+**構造変更**：なし。3ユニットの境界・依存関係は維持（1回目→2回目→3回目すべてで保持）。
 
 **意味的変更**：
 
 | Unit | 旧の責務 | 新の責務（動的IP × AI 観点）|
 |---|---|---|
 | Unit 1 | 認証 | **IPファン識別基盤** |
-| Unit 2 | 投稿 + AI | **ナマケモノ対話エンジン**（動的IPの核：AIキャラ人格 + RAG + 個別化記憶）|
+| Unit 2 | 投稿 + AI | **ナマケモノ対話エンジン**（動的IPの核：AIキャラ人格 + LLM 学習済み引用 + 個別化記憶。Phase 2 で S3 Agentic Search 拡張）|
 | Unit 3 | フィード | **共同体タイムライン**（サンドイッチUI でブランド構文を空間化）|
 
-**新規追加要素**（既存ユニット内）：
+**新規追加要素**（既存ユニット内・3回目サイクルまで）：
 
-- Unit 2: `lib/rag/`（引用ライブラリ）、`lib/memory/`（個別化記憶）
+- Unit 1: **Auth.js + Cognito User Pool 移行**（自前 AuthService / UserRepository / bcrypt / JWT 廃止）。`auth.ts` 新規、`middleware.ts` を Auth.js auth 委譲に。Cognito カスタム属性 `custom:name` で表示名管理
+- Unit 2: `lib/memory/`（個別化記憶 FR-006 + 活動メトリクス FR-009）。**達観した怠惰の老師人格**（FR-010）の System Prompt 固定。**5経路紐付け + 経路ラベル**（FR-003/011）。**依存防止切り上げ**（FR-009 / US-009）。引用は LLM の学習済み知識を信用（PoC）。Phase 2 で `lib/agents/`（S3 Agentic Search ツール）追加予定。CreatePostResult を部分失敗 enum に拡張
 - Unit 3: `components/BrandFrame.tsx`（サンドイッチUI）
-- Posts スキーマ：`aiCitationSource` 追加、`stamps` 削除
+- Posts スキーマ：`aiCitationSource` / `pathway` / `authorName` 追加、`stamps` 削除
+- **JWT 保存**：Auth.js の HttpOnly Cookie（XSS 耐性、PoC からセキュア）
+- **Users テーブル**：PoC では作成しない（Cognito 一本化）
