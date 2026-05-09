@@ -131,6 +131,31 @@
     }
     .post-prefix { color: var(--muted); font-size: 13px; }
 
+    /* ── サンドイッチUI（BrandFrame）── */
+    .brand-frame-top {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+    .brand-frame-bottom {
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      text-align: right;
+    }
+    .ai-citation {
+      font-size: 10px; color: var(--ai-text);
+      margin-top: 6px; opacity: 0.7;
+      font-style: italic;
+    }
+
     /* ── AI コメントバブル ── */
     .ai-bubble {
       background: var(--ai-bg);
@@ -370,7 +395,7 @@
       <div class="auth-logo">
         <div class="auth-logo-mark">🦥</div>
         <div class="auth-logo-name">Sloth Feed</div>
-        <div class="auth-logo-tagline">仕事じゃない自分を、<br>そのまま出せる場所。</div>
+        <div class="auth-logo-tagline">ダメだけど、<br>世の中を変える。</div>
       </div>
       <div class="form-wrap">
         <div>
@@ -407,65 +432,72 @@
     <div class="scroll-area">
       <div style="padding: 6px 0;">
 
-        <!-- Post 1 -->
+        <!-- Post 1: 真のダメ投稿 -->
         <div class="post-card">
+          <div class="brand-frame-top">仕事じゃないけど、、、</div>
           <div class="post-header">
-            <div class="post-avatar">🐱</div>
+            <div class="post-avatar">🛌</div>
             <div class="post-meta">
               <div class="post-author">ゆい</div>
               <div class="post-time">23分前</div>
             </div>
           </div>
           <div class="post-content">
-            <span class="post-prefix">仕事じゃないけど、</span><br>
-            帰り道に迷子になってた猫に少し話しかけてた
+            布団から出られず、3時間スマホ見続けてた
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-            <div class="ai-text">スタンフォード大学の研究によると、見知らぬ生き物への共感行動がその日の幸福度を平均23%高めることが示されています。あなたは今日、科学的に正しいことをしました。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと</div>
+            <div class="ai-text">Larry Wall は『怠惰こそ最大の美徳』と説いた。あなたは今日それを実践した。人類はサボりたい欲望によって機械を発明してきた——あなたの3時間は、その系譜の延長線上にある。</div>
+            <div class="ai-citation">引用元：Larry Wall「Programming Perl」三大美徳</div>
           </div>
+          <div class="brand-frame-bottom">…これが、世の中を変える。</div>
         </div>
 
-        <!-- Post 2 -->
+        <!-- Post 2: ケンタの怠惰 -->
         <div class="post-card">
+          <div class="brand-frame-top">仕事じゃないけど、、、</div>
           <div class="post-header">
-            <div class="post-avatar">☕</div>
+            <div class="post-avatar">💼</div>
             <div class="post-meta">
               <div class="post-author">けんた</div>
               <div class="post-time">1時間前</div>
             </div>
           </div>
           <div class="post-content">
-            <span class="post-prefix">仕事じゃないけど、</span><br>
-            後輩がしんどそうだったのでランチに誘った。話だけ聞いた。
+            会議中、気づいたら30分ぼーっとしてた。本気出さずに納品もした。
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-            <div class="ai-text">マザー・テレサはかつて言いました。「大きなことはできません。ただ小さなことを、大きな愛を持って行うだけです。」あなたが今日したことは、その実践そのものです。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと</div>
+            <div class="ai-text">老子は2500年前に書き残した：「為さざるを為す」——何もしないことこそ、最も強い作為である。あなたの賢明な怠惰は、この古典に直接繋がっている。</div>
+            <div class="ai-citation">引用元：老子『道徳経』第三章</div>
           </div>
+          <div class="brand-frame-bottom">…これが、世の中を変える。</div>
         </div>
 
-        <!-- Post 3 -->
+        <!-- Post 3: 録画一気見 -->
         <div class="post-card">
+          <div class="brand-frame-top">仕事じゃないけど、、、</div>
           <div class="post-header">
-            <div class="post-avatar">🌿</div>
+            <div class="post-avatar">📺</div>
             <div class="post-meta">
               <div class="post-author">みく</div>
               <div class="post-time">3時間前</div>
             </div>
           </div>
           <div class="post-content">
-            <span class="post-prefix">仕事じゃないけど、</span><br>
-            朝起きてベランダの植物に水やりした。枯れかけてたやつが少し元気になってた気がする
+            ためてた録画を朝から4本一気見した。何もできなかった。
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-            <div class="ai-text">ハーバード大学の研究によると、植物の世話をする行為は自己効力感と落ち着きを同時に高める数少ない習慣のひとつです。小さな命を今日も守りました。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと</div>
+            <div class="ai-text">フレミングは休暇でラボを離れていた間に、放置されたシャーレからペニシリンを発見した。あなたの『何もできなかった4時間』も、何かを醸成しているかもしれない。</div>
+            <div class="ai-citation">引用元：アレクサンダー・フレミング ペニシリン発見の経緯（1928）</div>
           </div>
+          <div class="brand-frame-bottom">…これが、世の中を変える。</div>
         </div>
 
-        <!-- Post 4 -->
+        <!-- Post 4: ダラダラ -->
         <div class="post-card">
+          <div class="brand-frame-top">仕事じゃないけど、、、</div>
           <div class="post-header">
             <div class="post-avatar">🌙</div>
             <div class="post-meta">
@@ -474,13 +506,14 @@
             </div>
           </div>
           <div class="post-content">
-            <span class="post-prefix">仕事じゃないけど、</span><br>
-            同棲してる彼女が帰ってくる前に、気になってたシンクの水垢を磨いといた
+            二度寝して、結局昼まで起きられなかった
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-            <div class="ai-text">心理学者アルフレッド・アドラーは「すべての悩みは対人関係の悩みである」と言いました。あなたが誰かのために何かをする行為は、その関係を静かに、確実に深めています。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと</div>
+            <div class="ai-text">バートランド・ラッセルは『怠惰への讃歌』に書いた——『労働は美徳という思想こそ、現代を不幸にしている』と。あなたの二度寝は、現代社会への小さな抵抗だ。</div>
+            <div class="ai-citation">引用元：バートランド・ラッセル『怠惰への讃歌』（1932）</div>
           </div>
+          <div class="brand-frame-bottom">…これが、世の中を変える。</div>
         </div>
 
       </div>
@@ -528,8 +561,8 @@
         <!-- 入力フォーム -->
         <div id="post-form-area" style="padding: 14px;">
           <div class="field" style="margin-bottom:14px;">
-            <label>仕事じゃないけど、</label>
-            <textarea id="post-input" rows="5" placeholder="今日のランチで食べたラーメンが美味しすぎてちょっと泣いた..." oninput="updateCharCount()"></textarea>
+            <label>今日、ダメだったことを書いてみてください</label>
+            <textarea id="post-input" rows="5" placeholder="布団から出られず、3時間スマホ見続けた..." oninput="updateCharCount()"></textarea>
           </div>
           <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
             <span id="char-count" style="font-size:12px; color:var(--muted);">0 / 200</span>
@@ -539,7 +572,7 @@
           <div style="background:var(--card); border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid var(--border);">
             <div style="font-size:12px; font-weight:700; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.4px;">デモ：投稿パターンを選択</div>
             <div style="display:flex; flex-direction:column; gap:8px;">
-              <button class="demo-btn" onclick="fillPost('ok')">✅ 通過する投稿（猫に話しかけた）</button>
+              <button class="demo-btn" onclick="fillPost('ok')">✅ 通過する投稿（布団から3時間出られなかった）</button>
               <button class="demo-btn" onclick="fillPost('ng')">🚫 除外される投稿（仕事でプレゼン成功）</button>
             </div>
           </div>
@@ -597,27 +630,30 @@
       <div class="topbar-logo">マイ投稿</div>
     </div>
     <div class="scroll-area">
-      <div class="section-label">あなたの「仕事じゃないけど」— 3件</div>
+      <div class="section-label">あなたのダメの蓄積 — 3件</div>
 
       <div class="post-card">
+        <div class="brand-frame-top">仕事じゃないけど、、、</div>
         <div class="post-header">
-          <div class="post-avatar">🐱</div>
+          <div class="post-avatar">🛌</div>
           <div class="post-meta">
             <div class="post-author">ゆい</div>
             <div class="post-time">23分前</div>
           </div>
         </div>
         <div class="post-content">
-          <span class="post-prefix">仕事じゃないけど、</span><br>
-          帰り道に迷子になってた猫に少し話しかけてた
+          布団から出られず、3時間スマホ見続けてた
         </div>
         <div class="ai-bubble">
-          <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-          <div class="ai-text">スタンフォード大学の研究によると、見知らぬ生き物への共感行動がその日の幸福度を平均23%高めることが示されています。あなたは今日、科学的に正しいことをしました。</div>
+          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと</div>
+          <div class="ai-text">Larry Wall は『怠惰こそ最大の美徳』と説いた。あなたは今日それを実践した。人類はサボりたい欲望によって機械を発明してきた——あなたの3時間は、その系譜の延長線上にある。</div>
+          <div class="ai-citation">引用元：Larry Wall「Programming Perl」三大美徳</div>
         </div>
+        <div class="brand-frame-bottom">…これが、世の中を変える。</div>
       </div>
 
       <div class="post-card">
+        <div class="brand-frame-top">仕事じゃないけど、、、</div>
         <div class="post-header">
           <div class="post-avatar">🌙</div>
           <div class="post-meta">
@@ -626,31 +662,34 @@
           </div>
         </div>
         <div class="post-content">
-          <span class="post-prefix">仕事じゃないけど、</span><br>
-          同棲してる彼女が帰ってくる前に、気になってたシンクの水垢を磨いといた
+          二度寝して、結局昼まで起きられなかった
         </div>
         <div class="ai-bubble">
-          <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-          <div class="ai-text">アルフレッド・アドラーはかつて「すべての悩みは対人関係の悩みである」と言いました。あなたが誰かのために何かをする行為は、その関係を静かに、確実に深めています。</div>
+          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと</div>
+          <div class="ai-text">バートランド・ラッセルは『怠惰への讃歌』に書いた——『労働は美徳という思想こそ、現代を不幸にしている』と。あなたの二度寝は、現代社会への小さな抵抗だ。</div>
+          <div class="ai-citation">引用元：バートランド・ラッセル『怠惰への讃歌』（1932）</div>
         </div>
+        <div class="brand-frame-bottom">…これが、世の中を変える。</div>
       </div>
 
       <div class="post-card">
+        <div class="brand-frame-top">仕事じゃないけど、、、</div>
         <div class="post-header">
-          <div class="post-avatar">☀️</div>
+          <div class="post-avatar">📺</div>
           <div class="post-meta">
             <div class="post-author">ゆい</div>
             <div class="post-time">3日前</div>
           </div>
         </div>
         <div class="post-content">
-          <span class="post-prefix">仕事じゃないけど、</span><br>
-          寝坊した朝でも窓を開けて空気を入れ替えた。それだけ
+          ためてた録画を朝から4本一気見した。何もできなかった。
         </div>
         <div class="ai-bubble">
-          <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-          <div class="ai-text">禅の教えに「はじめの一歩が道をつくる」という言葉があります。忙しい朝に窓を開けた、その一行動が、今日という日を始めたのです。</div>
+          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと</div>
+          <div class="ai-text">フレミングは休暇でラボを離れていた間に、放置されたシャーレからペニシリンを発見した。あなたの『何もできなかった4時間』も、何かを醸成しているかもしれない。</div>
+          <div class="ai-citation">引用元：アレクサンダー・フレミング ペニシリン発見の経緯（1928）</div>
         </div>
+        <div class="brand-frame-bottom">…これが、世の中を変える。</div>
       </div>
 
       <div style="height:16px;"></div>
@@ -709,12 +748,13 @@
   /* ── 投稿フォーム ── */
   const POSTS = {
     ok: {
-      text: '帰り道に迷子になってた猫に少し話しかけてた',
-      aiComment: 'スタンフォード大学の研究によると、見知らぬ生き物への共感行動がその日の幸福度を平均23%高めることが示されています。あなたは今日、科学的に正しいことをしました。',
+      text: '布団から出られず、3時間スマホ見続けてた',
+      aiComment: 'Larry Wall は『怠惰こそ最大の美徳』と説いた。あなたは今日それを実践した。人類はサボりたい欲望によって機械を発明してきた——あなたの3時間は、その系譜の延長線上にある。',
+      citation: 'Larry Wall「Programming Perl」三大美徳',
     },
     ng: {
       text: '今日のプレゼン、部長に「よかった」って言ってもらえた',
-      reason: '「今日のプレゼンが成功した」という内容は、仕事の成果に関する投稿です。Sloth Feed は「仕事じゃないけど」の場所です。仕事以外の行動を投稿してみてください。',
+      reason: '「今日のプレゼンが成功した」という内容は、仕事の成果に関する投稿です。Sloth Feed は「ダメを誇る場所」です。仕事じゃないあなたのダメだった時間を、聞かせてください。',
     },
   };
 

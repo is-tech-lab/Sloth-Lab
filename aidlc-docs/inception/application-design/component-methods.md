@@ -20,6 +20,7 @@ type Post = {
   content: string;
   authorId: string;
   aiComment: string;
+  aiCitationSource: string; // 引用元（例：「Larry Wall」「ラッセル『怠惰への讃歌』」）
   createdAt: string; // ISO 8601
 };
 
