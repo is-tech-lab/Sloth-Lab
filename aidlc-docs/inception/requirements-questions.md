@@ -1,4 +1,20 @@
-# 要件確認の質問 — Sloth Feed
+# 要件確認の質問 — Sloth Feed（1回目サイクル・履歴文書）
+
+> **本ドキュメントの位置づけ**
+> 1回目サイクル（2026-05-07 開始）の Requirements Analysis 段階で、PoC の技術スタック・MVP 範囲・拡張機能オプトインを確定するために実施した**初期要件収集**の質問記録。**全質問は回答済**で、結果は `requirements/requirements.md` に反映されている。
+>
+> 後続サイクル（3回目・2026-05-09）では、既存要件の検証に対応する質問ファイル `requirements/requirement-verification-questions.md` を別途作成済。**両者は別の役割**：
+> - 本ファイル（旧）：**初期収集**（技術選定・MVP 範囲）
+> - 新ファイル：**既存要件の検証**（修正 Issue・新FR追加判断）
+>
+> 履歴の記録として保持。
+>
+> **後続サイクルでの上書き履歴**：
+> - **質問3（投稿フィルタリングAIモデル）の回答は当時 A) Claude API（Anthropic）だったが、3回目サイクルで「Amazon Bedrock 経由の Claude」へ変更された**。詳細は `requirement-verification-questions.md` の質問9 参照。
+
+---
+
+## 当時の前提（記録）
 
 `project-overview.md` のビジョン・コンセプト・ターゲットユーザーを確認しました。
 PoC Webアプリの開発要件を確定するために、以下の質問に回答してください。
