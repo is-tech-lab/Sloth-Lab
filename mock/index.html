@@ -474,23 +474,23 @@
           <div class="brand-frame-bottom">…これが、世の中を変える。</div>
         </div>
 
-        <!-- Post 3: 経路③ 多様性の保護 -->
+        <!-- Post 3: 善行系 - 経路③ 多様性の保護 -->
         <div class="post-card">
           <div class="brand-frame-top">仕事じゃないけど、、、</div>
           <div class="post-header">
-            <div class="post-avatar">📺</div>
+            <div class="post-avatar">📱</div>
             <div class="post-meta">
               <div class="post-author">みく</div>
               <div class="post-time">3時間前</div>
             </div>
           </div>
           <div class="post-content">
-            ためてた録画を朝から4本一気見した。何もできなかった。
+            昼休みに親にLINEした。久しぶりに。
           </div>
           <div class="ai-bubble">
             <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路③多様性の保護】</div>
-            <div class="ai-text">あなたが録画を見続けた4時間で、「充実した休日」だけが正解の社会への抵抗が一票増えた。Instagram のキラキラ投稿が「正しい休日」のテンプレを押し付けるなか、あなたの「何もできなかった日」は、社会に「そういう日があってもいい」という前例を1つ追加した。この前例は、明日誰かが似た日を過ごす許可になる。兼好法師は700年前『徒然草』を「つれづれなるままに」と書き始めた——彼の暇な時間が、日本文学の頂点を残した。</div>
-            <div class="ai-citation">引用元：兼好法師『徒然草』序段（1330年頃）</div>
+            <div class="ai-text">会社のKPIには評価されない、誰の業績にもならない、その昼休みの3分。会社の業績ではなく家族のために動いたあなたの行為は、社会の価値観多様化に確実に貢献している。組織が本当に依存しているのは、こういう「仕事じゃない貢献」だ。Instagram に上げる類の派手さがないこのLINEこそ、社会を静かに支える土台である。</div>
+            <div class="ai-citation">引用元：「ケアの倫理」研究（C.ギリガン 1982）</div>
           </div>
           <div class="brand-frame-bottom">…これが、世の中を変える。</div>
         </div>
@@ -561,8 +561,8 @@
         <!-- 入力フォーム -->
         <div id="post-form-area" style="padding: 14px;">
           <div class="field" style="margin-bottom:14px;">
-            <label>今日、ダメだったことを書いてみてください</label>
-            <textarea id="post-input" rows="5" placeholder="布団から出られず、3時間スマホ見続けた..." oninput="updateCharCount()"></textarea>
+            <label>「仕事じゃないけど」やったこと——ダメだったこと、小さな善行、なんでも</label>
+            <textarea id="post-input" rows="5" placeholder="布団から出られず3時間スマホ見続けた / 彼に洗い物しといた / 昼休みに親にLINEした..." oninput="updateCharCount()"></textarea>
           </div>
           <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
             <span id="char-count" style="font-size:12px; color:var(--muted);">0 / 200</span>
@@ -572,8 +572,9 @@
           <div style="background:var(--card); border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid var(--border);">
             <div style="font-size:12px; font-weight:700; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.4px;">デモ：投稿パターンを選択</div>
             <div style="display:flex; flex-direction:column; gap:8px;">
-              <button class="demo-btn" onclick="fillPost('ok')">✅ 通過する投稿（布団から3時間出られなかった）</button>
-              <button class="demo-btn" onclick="fillPost('ng')">🚫 除外される投稿（仕事でプレゼン成功）</button>
+              <button class="demo-btn" onclick="fillPost('lazy')">😴 怠惰系（布団から3時間出られなかった）</button>
+              <button class="demo-btn" onclick="fillPost('kind')">🌱 善行系（昼休みに親にLINEした）</button>
+              <button class="demo-btn" onclick="fillPost('ng')">🚫 除外（仕事でプレゼン成功）</button>
             </div>
           </div>
 
@@ -630,7 +631,7 @@
       <div class="topbar-logo">マイ投稿</div>
     </div>
     <div class="scroll-area">
-      <div class="section-label">あなたのダメの蓄積 — 3件</div>
+      <div class="section-label">あなたの「仕事じゃないけど」— 3件</div>
 
       <div class="post-card">
         <div class="brand-frame-top">仕事じゃないけど、、、</div>
@@ -675,19 +676,19 @@
       <div class="post-card">
         <div class="brand-frame-top">仕事じゃないけど、、、</div>
         <div class="post-header">
-          <div class="post-avatar">📺</div>
+          <div class="post-avatar">🍳</div>
           <div class="post-meta">
             <div class="post-author">ゆい</div>
             <div class="post-time">3日前</div>
           </div>
         </div>
         <div class="post-content">
-          ためてた録画を朝から4本一気見した。何もできなかった。
+          帰り道に明日の朝ごはんのこと考えて卵買っといた
         </div>
         <div class="ai-bubble">
-          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路③多様性の保護】</div>
-          <div class="ai-text">あなたが録画を見続けた4時間で、「充実した休日」だけが正解の社会への抵抗が一票増えた。Instagram のキラキラ投稿が「正しい休日」のテンプレを押し付けるなか、あなたの「何もできなかった日」は、社会に「そういう日があってもいい」という前例を1つ追加した。この前例は、明日誰かが似た日を過ごす許可になる。兼好法師は700年前『徒然草』を「つれづれなるままに」と書き始めた——彼の暇な時間が、日本文学の頂点を残した。</div>
-          <div class="ai-citation">引用元：兼好法師『徒然草』序段（1330年頃）</div>
+          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路④自己への暴力の停止】</div>
+          <div class="ai-text">「これは仕事の業績じゃない、ただの帰り道のついでだ」と自分を低く見るのを、止めてください。明日の朝ごはんに気づくこの先回りの注意力こそが、生活を成立させる土台。あなたが「こんなの当たり前だ」と自分を責めるのを止めた瞬間、評価されない領域での貢献を可視化できないという社会全体のメンタルヘルス問題が、一人分後退する。</div>
+          <div class="ai-citation">引用元：A.アドラー個人心理学／ケアワーク経済学</div>
         </div>
         <div class="brand-frame-bottom">…これが、世の中を変える。</div>
       </div>
@@ -747,16 +748,28 @@
 
   /* ── 投稿フォーム ── */
   const POSTS = {
-    ok: {
+    lazy: {
       text: '布団から出られず、3時間スマホ見続けてた',
       aiComment: '【経路①過剰生産社会へのブレーキ】 あなたが布団から出ていれば、確実に必要のない仕事を1つこなしてしまっていた。あなたの3時間は、社会の総労働時間から、本来生まれるはずだった無駄な労働を削除した。ケインズは1930年に「100年後の人類は週15時間労働で済む」と予言したが、私たちはまだそこに到達していない。あなたの3時間は、その未来へ向けた小さな前進である。',
       citation: 'J.M.ケインズ『孫の世代の経済的可能性』（1930）',
     },
+    kind: {
+      text: '昼休みに親にLINEした',
+      aiComment: '【経路③多様性の保護】 会社のKPIには評価されない、誰の業績にもならない、その昼休みの3分。会社の業績ではなく家族のために動いたあなたの行為は、社会の価値観多様化に確実に貢献している。組織が本当に依存しているのは、こういう「仕事じゃない貢献」だ。Instagram に上げる類の派手さがないこのLINEこそ、社会を静かに支える土台である。',
+      citation: '「ケアの倫理」研究（C.ギリガン 1982）',
+    },
+    ok: {  // 後方互換のため lazy を ok にエイリアス
+      text: '布団から出られず、3時間スマホ見続けてた',
+      aiComment: '【経路①過剰生産社会へのブレーキ】 あなたが布団から出ていれば、確実に必要のない仕事を1つこなしてしまっていた。あなたの3時間は、社会の総労働時間から、本来生まれるはずだった無駄な労働を削除した。',
+      citation: 'J.M.ケインズ『孫の世代の経済的可能性』（1930）',
+    },
     ng: {
       text: '今日のプレゼン、部長に「よかった」って言ってもらえた',
-      reason: '「今日のプレゼンが成功した」という内容は、仕事の成果に関する投稿です。Sloth Feed は「ダメを誇る場所」です。仕事じゃないあなたのダメだった時間を、聞かせてください。',
+      reason: '「今日のプレゼンが成功した」という内容は、仕事の成果に関する投稿です。Sloth Feed は「仕事じゃないあなたの場所」です。怠惰でも善行でも、仕事の成果じゃないあなたの時間を聞かせてください。',
     },
   };
+
+  let currentPostType = 'lazy';
 
   function updateCharCount() {
     const v = document.getElementById('post-input').value;
@@ -767,6 +780,7 @@
   function fillPost(type) {
     const t = POSTS[type].text;
     document.getElementById('post-input').value = t;
+    currentPostType = type;
     updateCharCount();
   }
 
@@ -785,7 +799,8 @@
       } else {
         const sp = document.getElementById('success-panel');
         document.getElementById('success-content').textContent = '仕事じゃないけど、' + input;
-        document.getElementById('success-ai-text').textContent = POSTS.ok.aiComment;
+        const reply = POSTS[currentPostType] || POSTS.lazy;
+        document.getElementById('success-ai-text').textContent = reply.aiComment;
         sp.classList.add('show');
       }
       document.getElementById('post-scroll').scrollTop = 0;
