@@ -16,7 +16,7 @@
 - **Original Request**: Sloth Feed PoC Webアプリの新規開発
 - **User Impact**: Direct（投稿・タイムライン・スタンプが全てユーザー向け機能）
 - **Complexity Level**: Moderate（AIフィルタリング・スタンプ・タイムラインが絡む複数フロー）
-- **Stakeholders**: ペルソナA（罪悪感型・24歳社会人）、ペルソナB（優越感型・28歳社会人）
+- **Stakeholders**: ペルソナA（罪悪感型・24歳社会人・同棲）、ペルソナB（優越感型+諦め癖・28歳社会人・実家暮らし）
 
 ## Assessment Criteria Met
 - [x] High Priority: 新規ユーザー機能 (New User Features) — 全機能がユーザー直接インタラクション
