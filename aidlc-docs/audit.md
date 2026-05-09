@@ -179,3 +179,47 @@
 **Context**: Phase 3 完了。すべてのドキュメント・モックが新フレーム（人をダメにする運動 × IP事業 × 動的IP × AI技術）と整合
 
 ---
+
+## audit 反映確認・追記
+**Timestamp**: 2026-05-09T00:00:00Z
+**User Input**: "audit にこの行為反映されてる？"
+**AI Response**: audit.md が 2026-05-07 で止まっていることを確認。CLAUDE.md の必須要件（すべてのユーザー入力と AI 応答を記録）に違反していたため、2026-05-09 の活動10エントリを追記（INCEPTION 成果物レビュー / テーマ整合性チェック / システム本質的観点の問い・自己レビュー / Issue #5 起票 / Issue #5 議論サイクル / Issue #5 Close & Issue #7 起票 / Phase 1〜3 実行）。コミット `4467ca8`。
+**Context**: 監査証跡の整合確保
+
+---
+
+## PR #9 作成・Issue #7 にリンク
+**Timestamp**: 2026-05-09T00:00:00Z
+**User Input**: "pr 作成して issue に link"
+**AI Response**: ブランチ `7-ideation-inception-pivot` を origin に push。`gh pr create` で PR #9「『人をダメにする』運動 × IP事業へのピボット（Closes #7）」を作成。Body に Summary・Phase別変更内容・3コミット一覧・関連Issue・完了基準10項目（全チェック）・Test plan（ドキュメントレビュー8項目+モックレビュー4項目）を記載。`Closes #7` でIssue自動Close設定。
+**Context**: PR提出完了。https://github.com/is-tech-lab/Sloth-Lab/pull/9
+
+---
+
+## ビジョン表記の正式化
+**Timestamp**: 2026-05-09T00:00:00Z
+**User Input**: "ビジョンはこれ。『仕事じゃないけど、、、』が世の中を変える"
+**AI Response**: ビジョン表記の正式形式を明示確認（『』+ 助詞「が」付き）。これまで簡略形「仕事じゃないけど、、、世の中を変える」と書いていた箇所を全置換：
+- commercialization.md（4箇所、PR/FAQ含む）
+- aidlc-state.md（Project Frame）
+- project-overview.md（ビジョンセクション）
+- mock/index.html（認証画面タグライン）
+コミット `7d2209d` で4ファイル変更（+7/-7）。
+**Context**: ブランド核言語の表記統一。フレーズ自体が世の中を変える主体であるという再帰的構造を明示
+
+---
+
+## ビジョンの説明深化：5経路の言語化
+**Timestamp**: 2026-05-09T00:00:00Z
+**User Input**: "「それは偉業だ」とするビジョンの説明は安直で、どのような偉業に繋がるのか言語化をすることが本質"
+**AI Response**: 「それは偉業だ」式の安直な肯定では不十分という指摘を受け、「ダメ → 偉業」の経路を5系統に体系化：
+①過剰生産社会へのブレーキ ②創造の余白の保持 ③多様性の保護 ④自己への暴力の停止 ⑤集積による文化変容。
+ユーザー承認を得て3段階で再生成：
+- project-overview.md：ビジョン直下に「ビジョンを支える5経路」セクション新設（メカニズム言語化）
+- commercialization.md：マニフェストに5経路を箇条書きで組み込み
+- requirements.md：FR-003（AIナマケモノ対話）に5経路紐付けロジック明文化、FR-007（RAG引用ライブラリ）に経路別引用源タグ付け
+- customer_insights.md：ペルソナA・Bの提供価値を「投稿例×紐付け経路×具体的肯定」表で言語化
+- mock/index.html：タイムライン4件・マイ投稿3件のAIコメントを「経路明示+具体メカニズム+数字/科学/歴史引用」付き版に全置換
+**Context**: ビジョンが「自己啓発本」レベルから「メカニズムを言語化したマニフェスト」レベルへ昇格
+
+---
