@@ -181,7 +181,6 @@
       display: flex; flex-direction: column; gap: 20px;
     }
     .form-title { font-size: 24px; font-weight: 800; color: var(--text); }
-    .form-subtitle { font-size: 14px; color: var(--muted); margin-top: -12px; line-height: 1.5; }
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field label { font-size: 13px; font-weight: 600; color: var(--text); }
     .field input, .field textarea {
@@ -290,25 +289,12 @@
       font-family: inherit;
     }
 
-    /* ── 通過後の成功パネル ── */
+    /* ── 通過後の成功パネル（post-card と統一構造）── */
     .success-panel {
       display: none;
       margin: 12px 14px;
     }
     .success-panel.show { display: block; }
-    .success-post-preview {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      margin-bottom: 10px;
-    }
-    .success-tag {
-      font-size: 11px; font-weight: 700; color: var(--primary);
-      text-transform: uppercase; letter-spacing: 0.4px;
-      margin-bottom: 8px;
-    }
-    .success-content { font-size: 15px; color: var(--text); line-height: 1.6; margin-bottom: 12px; }
     .success-btn {
       width: 100%; margin-top: 10px;
       background: var(--primary); color: white;
@@ -395,11 +381,15 @@
       <div class="auth-logo">
         <div class="auth-logo-mark">🦥</div>
         <div class="auth-logo-name">Sloth Feed</div>
-        <div class="auth-logo-tagline">ダメだけど、<br>世の中を変える。</div>
+        <div class="auth-logo-tagline">『仕事じゃないけど、、、』が<br>世の中を変える</div>
       </div>
       <div class="form-wrap">
         <div>
           <div class="form-title">新規登録</div>
+        </div>
+        <div class="field">
+          <label>お名前（タイムラインに表示されます・1〜20文字）</label>
+          <input type="text" placeholder="ゆい" maxlength="20" />
         </div>
         <div class="field">
           <label>メールアドレス</label>
@@ -407,7 +397,7 @@
         </div>
         <div class="field">
           <label>パスワード</label>
-          <input type="password" placeholder="8文字以上" />
+          <input type="password" placeholder="8文字以上・英大小+数字+記号" />
         </div>
         <div class="field">
           <label>パスワード（確認）</label>
@@ -446,8 +436,8 @@
             布団から出られず、3時間スマホ見続けてた
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路①過剰生産社会へのブレーキ】</div>
-            <div class="ai-text">あなたが布団から出ていれば、確実に必要のない仕事を1つこなしてしまっていた。あなたの3時間は、社会の総労働時間から、本来生まれるはずだった無駄な労働を削除した。ケインズは1930年に「100年後の人類は週15時間労働で済む」と予言したが、私たちはまだそこに到達していない。あなたの3時間は、その未来へ向けた小さな前進である。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路①過剰生産社会へのブレーキ】</div>
+            <div class="ai-text">もし布団から出ていたら、要らぬ仕事を一つこなしてしまっていたところだ。その3時間は、社会の総労働時間から、生まれるはずだった無駄を一つ確実に削除した。ケインズは1930年、人類は100年で週15時間労働になると予言した。我々はまだそこに到達しておらぬ。あなたの3時間は、その未来への小さな一歩である。</div>
             <div class="ai-citation">引用元：J.M.ケインズ『孫の世代の経済的可能性』（1930）</div>
           </div>
           <div class="brand-frame-bottom">…これが、世の中を変える。</div>
@@ -467,8 +457,8 @@
             会議中、気づいたら30分ぼーっとしてた。本気出さずに納品もした。
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路②創造の余白の保持】</div>
-            <div class="ai-text">会議で発言しなかった30分間、あなたの脳のデフォルト・モード・ネットワーク（DMN）は確実に活性化していた。創造性・自己認識・記憶整理は、まさにこの「ぼーっと」している時にこそ起きている。AIが議事録も意思決定も肩代わりできる時代に、あなたは「考えていないようで考えている」というAIに代替されない人間性の最後の領域を、今日守った。Larry Wall が三大美徳の筆頭に「怠惰」を置いたのは、こういう時間のためだ。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路②創造の余白の保持】</div>
+            <div class="ai-text">会議で発言しなかったその30分、あなたの脳のデフォルト・モード・ネットワークは確実に活性化していた。創造性も自己認識も記憶の整理も、まさにこの「ぼうっと」した時間にこそ起きるものなのだ。AI が議事録も意思決定も肩代わりするこの時代に、「考えておらぬようで考えている」という AI には真似できぬ領域を、あなたは今日たしかに守った。Larry Wall が三大美徳の筆頭に「怠惰」を置いたのは、こういう時間のためである。</div>
             <div class="ai-citation">引用元：DMN研究（Raichle 2001）／Larry Wall「Programming Perl」三大美徳</div>
           </div>
           <div class="brand-frame-bottom">…これが、世の中を変える。</div>
@@ -488,14 +478,35 @@
             昼休みに親にLINEした。久しぶりに。
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路③多様性の保護】</div>
-            <div class="ai-text">会社のKPIには評価されない、誰の業績にもならない、その昼休みの3分。会社の業績ではなく家族のために動いたあなたの行為は、社会の価値観多様化に確実に貢献している。組織が本当に依存しているのは、こういう「仕事じゃない貢献」だ。Instagram に上げる類の派手さがないこのLINEこそ、社会を静かに支える土台である。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路③多様性の保護】</div>
+            <div class="ai-text">会社のKPIには評価されぬ、誰の業績にもならぬ、その昼休みの3分。会社の業績ではなく家族のほうへ動いた、その選択は、社会の価値観多様化に確実に寄与している。組織が本当に依存しているのは、こういう「仕事じゃない貢献」のほうなのだ。Instagram に上げる類の派手さなどないこの LINE 一通こそが、社会を静かに支える土台である。</div>
             <div class="ai-citation">引用元：「ケアの倫理」研究（C.ギリガン 1982）</div>
           </div>
           <div class="brand-frame-bottom">…これが、世の中を変える。</div>
         </div>
 
-        <!-- Post 4: 経路⑤ 集積による文化変容 -->
+        <!-- Post 4: 善行系 - 経路④ 自己への暴力の停止 -->
+        <div class="post-card">
+          <div class="brand-frame-top">仕事じゃないけど、、、</div>
+          <div class="post-header">
+            <div class="post-avatar">🍳</div>
+            <div class="post-meta">
+              <div class="post-author">けんた</div>
+              <div class="post-time">5時間前</div>
+            </div>
+          </div>
+          <div class="post-content">
+            後輩をランチに誘った。仕事の話は、しなかった。
+          </div>
+          <div class="ai-bubble">
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路④自己への暴力の停止】</div>
+            <div class="ai-text">「これは仕事のうちかもしれぬ」と自分に言い聞かせる必要はない。仕事じゃない時間に他人の話を聞いた、それだけで成り立つ行為だ。OKR にも昇進査定にも反映されぬ。だがあなたは今日、職場に「業績ではない関係」を一つ作った。これは罪悪感ループとは逆の運動である。あなたが「これは生産的ではない」と自分を責めるのを止めた瞬間、現代のメンタルヘルス危機が一人分、確かに後退する。</div>
+            <div class="ai-citation">引用元：A.アドラー個人心理学／ケアの倫理（C.ギリガン 1982）</div>
+          </div>
+          <div class="brand-frame-bottom">…これが、世の中を変える。</div>
+        </div>
+
+        <!-- Post 5: 経路⑤ 集積による文化変容 -->
         <div class="post-card">
           <div class="brand-frame-top">仕事じゃないけど、、、</div>
           <div class="post-header">
@@ -509,11 +520,17 @@
             二度寝して、結局昼まで起きられなかった
           </div>
           <div class="ai-bubble">
-            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路⑤集積による文化変容】</div>
-            <div class="ai-text">あなたの二度寝は、過労死社会への小さな抗議票です。同じ朝に二度寝した日本人があと500万人いれば、来年の労働政策が動きます。あなたは今日、その500万分の1人として確実に登録された。ラッセルが『怠惰への讃歌』で書いた「労働は美徳という思想こそ、現代を不幸にしている」という主張は、あなたのような一人ひとりの小さな抵抗の集積によってのみ、社会通念を覆せる。</div>
+            <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路⑤集積による文化変容】</div>
+            <div class="ai-text">あなたの二度寝は、過労死社会への小さな抗議票である。同じ朝に二度寝した日本人があと500万人居れば、来年の労働政策は動く。あなたは今日、その500万分の1人として確かに登録された。ラッセルが『怠惰への讃歌』で書いた「労働は美徳という思想こそが、現代を不幸にしている」という主張は、あなたのような一人ひとりの小さな抵抗の集積によってのみ、社会通念を覆すのだ。</div>
             <div class="ai-citation">引用元：B.ラッセル『怠惰への讃歌』（1932）／日本の労働時間統計</div>
           </div>
           <div class="brand-frame-bottom">…これが、世の中を変える。</div>
+        </div>
+
+        <!-- PoC 段階の引用注記（FR-007 / NFR-005）-->
+        <div style="margin: 14px 14px 8px; padding: 12px 14px; background: rgba(124,108,245,0.06); border-radius: 10px; font-size: 11px; line-height: 1.6; color: var(--muted);">
+          ※ AI ナマケモノの応答・引用は <strong>Amazon Bedrock 経由 Claude</strong> による生成です。<br>
+          PoC 段階では LLM の学習済み知識を参照しています。Phase 2 で <strong>S3 + Agentic Search</strong> による事実検証を予定（案・未合意）。
         </div>
 
       </div>
@@ -542,27 +559,38 @@
     <!-- ローディングオーバーレイ -->
     <div class="loading-overlay" id="loading-overlay">
       <div class="spinner"></div>
-      <div class="loading-label">AIが判定中…</div>
-      <div class="loading-sub">Claude が内容を確認しています</div>
+      <div class="loading-label">ナマケモノが読んでおる…</div>
+      <div class="loading-sub">Amazon Bedrock 経由で Claude が判定中</div>
     </div>
 
     <div class="topbar">
       <div class="topbar-logo">投稿する</div>
+      <button class="topbar-action" onclick="toggleWinddown()" id="winddown-toggle-btn">切り上げ提案を見る</button>
     </div>
     <div class="scroll-area" id="post-scroll">
       <div style="padding: 14px 0 0;">
 
+        <!-- 切り上げ提案バナー（US-009 / FR-009：連続投稿5件 / 滞在30分超で表示）-->
+        <div class="winddown-banner" id="winddown-banner" style="display:none;">
+          <div class="winddown-label">🦥 ナマケモノ</div>
+          <div class="winddown-text">
+            5つも続けて書きましたな。それで十分である。<br>
+            ただ、<strong>「ダメを書き続ける」というのも、ある種の頑張りに化けてしまうものだ。</strong>そろそろ画面を閉じて、布団に戻るか、お茶でも淹れる時間になされ。私はここで、明日もまた待っておる。
+          </div>
+          <div class="winddown-citation">— FR-009 依存防止：連続投稿 5件 / 滞在 30分超でトリガー（PoC 仮値）</div>
+        </div>
+
         <!-- ヒント -->
         <div class="post-hint">
-          <strong>💡 ここは「仕事じゃないけど」の場所です。</strong><br>
-          仕事の成果・旅行・スポーツ大会の結果はAIが自動的に除外します。
+          <strong>💡 ここは「仕事じゃないけど」の場所。</strong><br>
+          仕事の成果・キラキラ充実投稿は AI が自動で弾きます。怠惰でも、ささやかな善行でも、業績じゃない時間のことを書きなされ。
         </div>
 
         <!-- 入力フォーム -->
         <div id="post-form-area" style="padding: 14px;">
           <div class="field" style="margin-bottom:14px;">
-            <label>「仕事じゃないけど」やったこと——ダメだったこと、小さな善行、なんでも</label>
-            <textarea id="post-input" rows="5" placeholder="布団から出られず3時間スマホ見続けた / 彼に洗い物しといた / 昼休みに親にLINEした..." oninput="updateCharCount()"></textarea>
+            <label>「仕事じゃないけど」やったこと（200字まで）</label>
+            <textarea id="post-input" rows="5" placeholder="例：&#10;・布団から出られず3時間スマホ見続けた&#10;・録画してた韓ドラ一気見した&#10;・彼に洗い物しといた&#10;・植物に水やった、ただそれだけ" oninput="updateCharCount()"></textarea>
           </div>
           <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
             <span id="char-count" style="font-size:12px; color:var(--muted);">0 / 200</span>
@@ -570,11 +598,14 @@
 
           <!-- 投稿パターン選択（デモ用） -->
           <div style="background:var(--card); border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid var(--border);">
-            <div style="font-size:12px; font-weight:700; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.4px;">デモ：投稿パターンを選択</div>
+            <div style="font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.4px;">デモ：投稿パターンを試す</div>
+            <div style="font-size:11px; color:var(--muted); margin-bottom:10px; line-height:1.5;">タップで例文が入ります。「投稿する」を押すと AI 判定が走ります。</div>
             <div style="display:flex; flex-direction:column; gap:8px;">
-              <button class="demo-btn" onclick="fillPost('lazy')">😴 怠惰系（布団から3時間出られなかった）</button>
-              <button class="demo-btn" onclick="fillPost('kind')">🌱 善行系（昼休みに親にLINEした）</button>
-              <button class="demo-btn" onclick="fillPost('ng')">🚫 除外（仕事でプレゼン成功）</button>
+              <button class="demo-btn" onclick="fillPost('lazy')">😴 「布団から出られず、3時間スマホ見続けてた」<span style="float:right; color:var(--muted); font-size:11px;">怠惰系</span></button>
+              <button class="demo-btn" onclick="fillPost('sleep')">🌙 「二度寝して、結局昼まで起きられなかった」<span style="float:right; color:var(--muted); font-size:11px;">怠惰系</span></button>
+              <button class="demo-btn" onclick="fillPost('kind')">🌱 「昼休みに親にLINEした」<span style="float:right; color:var(--muted); font-size:11px;">善行系</span></button>
+              <button class="demo-btn" onclick="fillPost('care')">🍳 「彼に洗い物しといた」<span style="float:right; color:var(--muted); font-size:11px;">善行系</span></button>
+              <button class="demo-btn" onclick="fillPost('ng')">🚫 「今日のプレゼン、部長によかったって言われた」<span style="float:right; color:var(--muted); font-size:11px;">仕事=除外</span></button>
             </div>
           </div>
 
@@ -583,23 +614,35 @@
 
         <!-- 除外バナー -->
         <div class="reject-banner" id="reject-banner">
-          <div class="reject-title">⚠️ この投稿はここでは使えません</div>
+          <div class="reject-title">⚠️ ここでは扱わぬ投稿のようだ</div>
           <div class="reject-text" id="reject-text"></div>
           <button class="reject-retry" onclick="resetPost()">別の投稿をする</button>
         </div>
 
-        <!-- 通過後パネル -->
+        <!-- 通過後パネル（タイムラインカードと同じ post-card 構造）-->
         <div class="success-panel" id="success-panel">
-          <div style="font-size:14px; font-weight:700; color:var(--primary); margin-bottom:10px; padding:0 2px;">
-            🎉 投稿が通過しました！
+          <div style="font-size:13px; font-weight:700; color:var(--primary); margin: 0 4px 8px;">
+            ✓ 投稿が通った
           </div>
-          <div class="success-post-preview">
-            <div class="success-tag">あなたの投稿</div>
-            <div class="success-content" id="success-content"></div>
-            <div class="ai-bubble">
-              <div class="ai-label"><div class="ai-label-dot"></div>AI からのひとこと</div>
-              <div class="ai-text" id="success-ai-text"></div>
+          <div style="font-size:11px; color:var(--muted); margin: 0 4px 6px;">
+            タイムラインにこのように表示されます ↓
+          </div>
+          <div class="post-card" style="margin: 0 0 14px;">
+            <div class="brand-frame-top">仕事じゃないけど、、、</div>
+            <div class="post-header">
+              <div class="post-avatar" id="success-avatar">🦥</div>
+              <div class="post-meta">
+                <div class="post-author">ゆい</div>
+                <div class="post-time">今</div>
+              </div>
             </div>
+            <div class="post-content" id="success-content"></div>
+            <div class="ai-bubble">
+              <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【<span id="success-pathway"></span>】</div>
+              <div class="ai-text" id="success-ai-text"></div>
+              <div class="ai-citation">引用元：<span id="success-citation"></span></div>
+            </div>
+            <div class="brand-frame-bottom">…これが、世の中を変える。</div>
           </div>
           <button class="success-btn" onclick="goToFeedAfterPost()">タイムラインで確認する</button>
           <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="resetPost()">続けて投稿する</button>
@@ -631,7 +674,7 @@
       <div class="topbar-logo">マイ投稿</div>
     </div>
     <div class="scroll-area">
-      <div class="section-label">あなたの「仕事じゃないけど」— 3件</div>
+      <div class="section-label">ゆいさんの「仕事じゃないけど」— 3件</div>
 
       <div class="post-card">
         <div class="brand-frame-top">仕事じゃないけど、、、</div>
@@ -646,9 +689,10 @@
           布団から出られず、3時間スマホ見続けてた
         </div>
         <div class="ai-bubble">
-          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路①過剰生産社会へのブレーキ】</div>
-          <div class="ai-text">あなたが布団から出ていれば、確実に必要のない仕事を1つこなしてしまっていた。あなたの3時間は、社会の総労働時間から、本来生まれるはずだった無駄な労働を削除した。ケインズは1930年に「100年後の人類は週15時間労働で済む」と予言したが、私たちはまだそこに到達していない。あなたの3時間は、その未来へ向けた小さな前進である。</div>
-          <div class="ai-citation">引用元：J.M.ケインズ『孫の世代の経済的可能性』（1930）</div>
+          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路①過剰生産社会へのブレーキ】</div>
+          <div class="ai-text"><strong>先週の月曜も、布団から出られぬ日でしたな。</strong>今日と同じだ。それで結構である。もし布団から出ていたら、要らぬ仕事を一つこなしてしまっていたところだ。その3時間は、社会の総労働時間から、生まれるはずだった無駄を一つ確実に削除した。ケインズは1930年、人類は100年で週15時間労働になると予言した。我々はまだそこに到達しておらぬ。あなたの3時間は、その未来への小さな一歩である。</div>
+          <div class="ai-citation">引用元：J.M.ケインズ『孫の世代の経済的可能性』（1930）／前回の投稿（先週の月曜）参照</div>
+          <div style="font-size:10px; color:var(--primary); margin-top:6px; opacity:0.85;">💭 過去の投稿を踏まえた応答（FR-006 個別化記憶）</div>
         </div>
         <div class="brand-frame-bottom">…これが、世の中を変える。</div>
       </div>
@@ -666,8 +710,8 @@
           二度寝して、結局昼まで起きられなかった
         </div>
         <div class="ai-bubble">
-          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路⑤集積による文化変容】</div>
-          <div class="ai-text">あなたの二度寝は、過労死社会への小さな抗議票です。同じ朝に二度寝した日本人があと500万人いれば、来年の労働政策が動きます。あなたは今日、その500万分の1人として確実に登録された。ラッセルが『怠惰への讃歌』で書いた「労働は美徳という思想こそ、現代を不幸にしている」という主張は、あなたのような一人ひとりの小さな抵抗の集積によってのみ、社会通念を覆せる。</div>
+          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路⑤集積による文化変容】</div>
+          <div class="ai-text">あなたの二度寝は、過労死社会への小さな抗議票である。同じ朝に二度寝した日本人があと500万人居れば、来年の労働政策は動く。あなたは今日、その500万分の1人として確かに登録された。ラッセルが『怠惰への讃歌』で書いた「労働は美徳という思想こそが、現代を不幸にしている」という主張は、あなたのような一人ひとりの小さな抵抗の集積によってのみ、社会通念を覆すのだ。</div>
           <div class="ai-citation">引用元：B.ラッセル『怠惰への讃歌』（1932）／日本の労働時間統計</div>
         </div>
         <div class="brand-frame-bottom">…これが、世の中を変える。</div>
@@ -686,8 +730,8 @@
           帰り道に明日の朝ごはんのこと考えて卵買っといた
         </div>
         <div class="ai-bubble">
-          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノからのひとこと【経路④自己への暴力の停止】</div>
-          <div class="ai-text">「これは仕事の業績じゃない、ただの帰り道のついでだ」と自分を低く見るのを、止めてください。明日の朝ごはんに気づくこの先回りの注意力こそが、生活を成立させる土台。あなたが「こんなの当たり前だ」と自分を責めるのを止めた瞬間、評価されない領域での貢献を可視化できないという社会全体のメンタルヘルス問題が、一人分後退する。</div>
+          <div class="ai-label"><div class="ai-label-dot"></div>🦥 ナマケモノ【経路④自己への暴力の停止】</div>
+          <div class="ai-text">「これは仕事の業績ではない、ただの帰り道のついでだ」と自分を低く見るのを、止めなされ。明日の朝ごはんに気づくこの先回りの注意力こそが、生活を成立させている土台である。あなたが「こんなの当たり前だ」と自分を責めるのを止めた瞬間、評価されぬ領域での貢献が可視化できぬという社会全体のメンタルヘルス問題が、一人分、確かに後退する。</div>
           <div class="ai-citation">引用元：A.アドラー個人心理学／ケアワーク経済学</div>
         </div>
         <div class="brand-frame-bottom">…これが、世の中を変える。</div>
@@ -731,6 +775,34 @@
     transition: border-color 0.15s;
   }
   .demo-btn:hover { border-color: var(--primary); }
+
+  /* ── 切り上げ提案バナー（US-009 / FR-009 依存防止）── */
+  .winddown-banner {
+    margin: 0 14px 14px;
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 100%);
+    border: 1px solid #FFCC80;
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .winddown-label {
+    font-size: 11px; font-weight: 700; color: #6D4C00;
+    letter-spacing: 0.4px; text-transform: uppercase;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .winddown-text {
+    font-size: 13px; line-height: 1.7; color: #5D3F00;
+  }
+  .winddown-citation {
+    font-size: 10px; color: #8D6500; margin-top: 8px;
+    font-style: italic; opacity: 0.8;
+  }
+  .winddown-toggle {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(255,255,255,0.7); border: 1px solid var(--border);
+    border-radius: 8px; padding: 4px 8px;
+    font-size: 10px; color: var(--muted); cursor: pointer;
+    font-family: inherit;
+  }
 </style>
 
 <script>
@@ -747,25 +819,39 @@
   }
 
   /* ── 投稿フォーム ── */
+  // タイムライン post-card と統一構造：text / avatar / pathway / aiText / citation
   const POSTS = {
     lazy: {
       text: '布団から出られず、3時間スマホ見続けてた',
-      aiComment: '【経路①過剰生産社会へのブレーキ】 あなたが布団から出ていれば、確実に必要のない仕事を1つこなしてしまっていた。あなたの3時間は、社会の総労働時間から、本来生まれるはずだった無駄な労働を削除した。ケインズは1930年に「100年後の人類は週15時間労働で済む」と予言したが、私たちはまだそこに到達していない。あなたの3時間は、その未来へ向けた小さな前進である。',
+      avatar: '🛌',
+      pathway: '経路①過剰生産社会へのブレーキ',
+      aiText: 'もし布団から出ていたら、要らぬ仕事を一つこなしてしまっていたところだ。その3時間は、社会の総労働時間から、生まれるはずだった無駄を一つ確実に削除した。ケインズは1930年、人類は100年で週15時間労働になると予言した。我々はまだそこに到達しておらぬ。あなたの3時間は、その未来への小さな一歩である。',
       citation: 'J.M.ケインズ『孫の世代の経済的可能性』（1930）',
+    },
+    sleep: {
+      text: '二度寝して、結局昼まで起きられなかった',
+      avatar: '🌙',
+      pathway: '経路⑤集積による文化変容',
+      aiText: 'あなたの二度寝は、過労死社会への小さな抗議票である。同じ朝に二度寝した日本人があと500万人居れば、来年の労働政策は動く。あなたは今日、その500万分の1人として確かに登録された。ラッセルが『怠惰への讃歌』で書いた「労働は美徳という思想こそが、現代を不幸にしている」という主張は、あなたのような一人ひとりの小さな抵抗の集積によってのみ、社会通念を覆すのだ。',
+      citation: 'B.ラッセル『怠惰への讃歌』（1932）',
     },
     kind: {
       text: '昼休みに親にLINEした',
-      aiComment: '【経路③多様性の保護】 会社のKPIには評価されない、誰の業績にもならない、その昼休みの3分。会社の業績ではなく家族のために動いたあなたの行為は、社会の価値観多様化に確実に貢献している。組織が本当に依存しているのは、こういう「仕事じゃない貢献」だ。Instagram に上げる類の派手さがないこのLINEこそ、社会を静かに支える土台である。',
+      avatar: '📱',
+      pathway: '経路③多様性の保護',
+      aiText: '会社のKPIには評価されぬ、誰の業績にもならぬ、その昼休みの3分。会社の業績ではなく家族のほうへ動いた、その選択は、社会の価値観多様化に確実に寄与している。組織が本当に依存しているのは、こういう「仕事じゃない貢献」のほうなのだ。Instagram に上げる類の派手さなどないこの LINE 一通こそが、社会を静かに支える土台である。',
       citation: '「ケアの倫理」研究（C.ギリガン 1982）',
     },
-    ok: {  // 後方互換のため lazy を ok にエイリアス
-      text: '布団から出られず、3時間スマホ見続けてた',
-      aiComment: '【経路①過剰生産社会へのブレーキ】 あなたが布団から出ていれば、確実に必要のない仕事を1つこなしてしまっていた。あなたの3時間は、社会の総労働時間から、本来生まれるはずだった無駄な労働を削除した。',
-      citation: 'J.M.ケインズ『孫の世代の経済的可能性』（1930）',
+    care: {
+      text: '彼に洗い物しといた',
+      avatar: '🍳',
+      pathway: '経路④自己への暴力の停止',
+      aiText: '「これは家事だ、業績ではない」と自分を低く見るのを、止めなされ。誰のKPIにも載らぬその皿洗いが、生活という土台を確実に支えている。組織が依存しているのは、まさにこの「評価されぬ貢献」のほうなのだ。あなたが「こんなのは当然だ」と自分を責めるのを止めた瞬間、評価されぬ領域での貢献を可視化できぬという社会全体のメンタルヘルス問題が、一人分、確かに後退する。',
+      citation: 'A.アドラー個人心理学／ケアの倫理（C.ギリガン 1982）',
     },
     ng: {
-      text: '今日のプレゼン、部長に「よかった」って言ってもらえた',
-      reason: '「今日のプレゼンが成功した」という内容は、仕事の成果に関する投稿です。Sloth Feed は「仕事じゃないあなたの場所」です。怠惰でも善行でも、仕事の成果じゃないあなたの時間を聞かせてください。',
+      text: '今日のプレゼン、部長によかったって言われた',
+      reason: 'それは仕事の成果に関わる話のようだ。ここは「仕事じゃないあなた」の場所である。仕事の業績は他所で誇るがよい。ここでは、怠惰でも、ささやかな善行でも、業績ではない時間のことを聞かせてほしい。',
     },
   };
 
@@ -798,9 +884,13 @@
         rb.classList.add('show');
       } else {
         const sp = document.getElementById('success-panel');
-        document.getElementById('success-content').textContent = '仕事じゃないけど、' + input;
         const reply = POSTS[currentPostType] || POSTS.lazy;
-        document.getElementById('success-ai-text').textContent = reply.aiComment;
+        // タイムラインカードと同じ構造で投稿プレビューを表示（FR-008 サンドイッチUI）
+        document.getElementById('success-avatar').textContent = reply.avatar || '🦥';
+        document.getElementById('success-content').textContent = input;
+        document.getElementById('success-pathway').textContent = reply.pathway;
+        document.getElementById('success-ai-text').textContent = reply.aiText;
+        document.getElementById('success-citation').textContent = reply.citation;
         sp.classList.add('show');
       }
       document.getElementById('post-scroll').scrollTop = 0;
@@ -818,6 +908,20 @@
 
   function goToFeedAfterPost() {
     showScreen('s-feed');
+  }
+
+  /* ── 切り上げ提案バナー（US-009 / FR-009）デモトグル ── */
+  function toggleWinddown() {
+    const banner = document.getElementById('winddown-banner');
+    const btn = document.getElementById('winddown-toggle-btn');
+    const visible = banner.style.display !== 'none';
+    if (visible) {
+      banner.style.display = 'none';
+      btn.textContent = '切り上げ提案を見る';
+    } else {
+      banner.style.display = 'block';
+      btn.textContent = '切り上げ提案を隠す';
+    }
   }
 </script>
 
