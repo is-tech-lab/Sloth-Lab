@@ -1,7 +1,6 @@
 # コンポーネント・メソッドシグネチャ — Sloth Feed
 
-> **本ドキュメントの位置づけ（2026-05-09 更新・3回目サイクル検証済）**
-> 1回目サイクルで作成。2回目・3回目サイクルで AINamakemonoService 改名・aiCitationSource 追加・依存防止/経路ラベル要件などを反映。
+> 最新版：2026-05-09 / 改訂履歴は [`audit.md`](../../audit.md) と [`aidlc-state.md`](../../aidlc-state.md) を参照。
 
 > 詳細なビジネスロジック（Claude プロンプト文面・DynamoDB クエリ最適化等）は
 > コンストラクション・フェーズの機能設計 (Functional Design) で定義する。具体的には：System Prompt（老師人格 / FR-010）・5経路選択ロジック・連続投稿/滞在時間検知（依存防止 / FR-009）・引用源プロンプトヒント（FR-007）・経路ラベル付加（FR-011）など。
@@ -69,17 +68,7 @@ type PaginatedResult<T> = {
   lastKey?: string; // DynamoDB ExclusiveStartKey のシリアライズ値
 };
 
-// AuthResult 型は廃止：Auth.js + Cognito 移行に伴い、Session 型（Auth.js 標準）に統一
-// 詳細は本ドキュメント末尾の「Authentication & Identity Flow」セクション参照
 ```
-
----
-
-## AuthService（廃止）
-
-**3回目サイクルで廃止**：Auth.js + AWS Cognito Provider に移行したため、自前の `AuthService` クラスは不要。
-代わりにプロジェクトルートの `auth.ts`（Auth.js 設定ファイル）が認証エントリポイントとなる。
-詳細は本ドキュメント末尾の **「Authentication & Identity Flow (PoC) — Auth.js + AWS Cognito」** セクション参照。
 
 ---
 
@@ -207,7 +196,6 @@ class PostRepository {
 
 ```typescript
 // ── 認証関連エンドポイント ──
-// 自前の /api/auth/register / /api/auth/login は廃止。
 // Auth.js のハンドラ /api/auth/[...nextauth]/route.ts に統一（Cognito OAuth フロー）
 // 詳細は本ドキュメント末尾の「Authentication & Identity Flow」セクション参照
 
@@ -232,7 +220,6 @@ class PostRepository {
 ## middleware.ts（Auth.js 委譲）
 
 ```typescript
-// 3回目サイクルで Auth.js + Cognito 移行に伴い、自前の JWT 検証は廃止。
 // Auth.js の auth ヘルパに保護機構を委譲する。
 //
 // import { auth } from "@/auth"
@@ -372,7 +359,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 ```typescript
 export { GET, POST } from "@/auth";
-// 自前の /api/auth/register / /api/auth/login は廃止。Auth.js が提供する OAuth フローに統一
 ```
 
 #### `middleware.ts` — Auth.js の保護機構を利用
@@ -451,7 +437,7 @@ export function Header() {
 | `NEXTAUTH_URL` | アプリ Base URL（例: `http://localhost:3000`）|
 | `AWS_REGION` | 既存（DynamoDB / Cognito 共通）|
 
-→ **`JWT_SECRET` / `JWT_EXPIRES_IN` 廃止**。
+
 
 ### Users テーブルの責務（変更）
 
@@ -459,7 +445,7 @@ export function Header() {
 - DynamoDB の Users テーブルは **PoC では不要**（Cognito 一本化）
 - Phase 2 構想：Sloth Feed 固有メタデータ（プロフィール画像 URL・好み設定など）が必要になれば DynamoDB Users テーブルを追加
 
-→ **AuthService / UserRepository は廃止**。Auth.js の薄い設定（`auth.ts`）で代替。
+Auth.js の薄い設定（`auth.ts`）が認証エントリポイント。
 
 ### Post.authorName の取得経路（更新）
 

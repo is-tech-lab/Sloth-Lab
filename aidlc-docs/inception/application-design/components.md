@@ -1,7 +1,6 @@
 # コンポーネント定義 — Sloth Feed
 
-> **本ドキュメントの位置づけ（2026-05-09 更新・3回目サイクル検証済）**
-> 1回目サイクルで作成。2回目サイクル（Issue #5 帰着）と3回目サイクル（正式再構成）で更新済。`application-design.md`・`services.md` と整合。
+> 最新版：2026-05-09 / 改訂履歴は [`audit.md`](../../audit.md) と [`aidlc-state.md`](../../aidlc-state.md) を参照。
 
 ## アーキテクチャ概要
 
@@ -23,36 +22,28 @@ middleware.ts               # Auth.js auth に委譲（Cookie ベースのセッ
 
 ## バックエンド・コンポーネント
 
-### 1. AuthService（**3回目サイクルで廃止**）
-| 項目 | 内容 |
-|------|------|
-| **3回目サイクルで廃止** | Auth.js + Cognito 移行に伴い、自前 AuthService クラスは不要 |
-| **代替** | `auth.ts`（プロジェクトルート）+ `app/api/auth/[...nextauth]/route.ts` |
-| **依存** | `next-auth` v5、`next-auth/providers/cognito` |
-| **詳細** | `component-methods.md` の「Authentication & Identity Flow」セクション参照 |
-
-### 2. PostService
+### 1. PostService
 | 項目 | 内容 |
 |------|------|
 | **パス** | `lib/services/post.service.ts` |
 | **責務** | 投稿作成フローの全体オーケストレーション（フィルタリング → ナマケモノ対話 → 保存） |
 | **依存** | PostRepository, AIFilteringService, AINamakemonoService |
 
-### 3. FeedService
+### 2. FeedService
 | 項目 | 内容 |
 |------|------|
 | **パス** | `lib/services/feed.service.ts` |
 | **責務** | タイムライン取得・自分の投稿一覧取得 |
 | **依存** | PostRepository |
 
-### 4. AIFilteringService
+### 3. AIFilteringService
 | 項目 | 内容 |
 |------|------|
 | **パス** | `lib/services/ai-filtering.service.ts` |
 | **責務** | **Amazon Bedrock 経由で Claude モデル**を呼び出し、投稿が「仕事外」（**怠惰系・善行系問わず**）かを判定する。仕事の成果・キラキラ充実投稿のみ除外、除外時は理由も生成 |
 | **依存** | AWS SDK for JavaScript v3 (`@aws-sdk/client-bedrock-runtime`) |
 
-### 5. AINamakemonoService（**動的IPの核**）
+### 4. AINamakemonoService（**動的IPの核**）
 | 項目 | 内容 |
 |------|------|
 | **パス** | `lib/services/ai-namakemono.service.ts` |
@@ -60,21 +51,14 @@ middleware.ts               # Auth.js auth に委譲（Cookie ベースのセッ
 | **依存** | AWS SDK for JavaScript v3 (`@aws-sdk/client-bedrock-runtime`)、`UserHistory`（個別化記憶） |
 | **Phase 2 構想** | S3 + Agentic Search による引用検証（PoC には含まれない） |
 
-### 6. UserRepository（**3回目サイクルで PoC 外**）
-| 項目 | 内容 |
-|------|------|
-| **3回目サイクルで PoC スコープから外れた** | Cognito 一本化により、Users データは Cognito User Pool が管理 |
-| **PoC 内では未使用** | authorName 取得は `session.user.name`（Auth.js Session）から直接取得 |
-| **Phase 2 構想** | Sloth Feed 固有メタデータ（プロフィール画像 URL 等）が必要になれば再導入。`{ userId: Cognito sub, ... }` 形式の補助テーブル |
-
-### 7. PostRepository
+### 5. PostRepository
 | 項目 | 内容 |
 |------|------|
 | **パス** | `lib/repositories/post.repository.ts` |
 | **責務** | Posts テーブルの CRUD + GSI によるユーザー別検索 |
 | **依存** | AWS SDK v3 |
 
-### 8. auth.ts（**新規・Auth.js 設定**）
+### 6. auth.ts（**新規・Auth.js 設定**）
 | 項目 | 内容 |
 |------|------|
 | **パス** | プロジェクトルート `auth.ts`（または `lib/auth.ts`）|
@@ -104,10 +88,10 @@ middleware.ts               # Auth.js auth に委譲（Cookie ベースのセッ
 | PostForm | `components/PostForm.tsx` | テキスト入力欄・送信ボタン・バリデーション |
 | FeedList | `components/FeedList.tsx` | PostCard の一覧レンダリング（PoC では最近 50件のみ表示。**Phase 2 でページネーション対応**を予定）|
 | NamakemonoBubble | `components/NamakemonoBubble.tsx` | AI ナマケモノコメントの吹き出し表示。**【経路X】ラベル**（FR-011）・**🦥 ヘッダ**・**引用元（aiCitationSource）**を含む |
-| **BrandFrame**（新規）| `components/BrandFrame.tsx` | **サンドイッチUI 上下フレーム**。ブランド構文「仕事じゃないけど…これが世の中を変える」を投稿カード上下で保証（FR-008）|
+| **BrandFrame** | `components/BrandFrame.tsx` | **サンドイッチUI 上下フレーム**。ブランド構文「仕事じゃないけど…これが世の中を変える」を投稿カード上下で保証（FR-008）|
 | FilteringFeedback | `components/FilteringFeedback.tsx` | フィルタリング除外時の理由メッセージ表示 |
 | AuthForm | `components/AuthForm.tsx` | **PoC 実装時に決定**：Cognito Hosted UI 利用なら不要、自前フォーム採用なら Auth.js の `signIn` / Cognito SignUp API を呼び出す共通フォーム |
-| SessionProvider（新規）| `app/providers.tsx` 内 | クライアントコンポーネント全体に Auth.js の SessionProvider を適用（`useSession()` を使えるようにする）|
+| SessionProvider | `app/providers.tsx` 内 | クライアントコンポーネント全体に Auth.js の SessionProvider を適用（`useSession()` を使えるようにする）|
 | LoadingSpinner | `components/LoadingSpinner.tsx` | Bedrock Claude 呼び出し中のローディング表示 |
 
 ---
