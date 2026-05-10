@@ -33,7 +33,7 @@
 
 表形式でまとめてください。
 
-**重要**: 結果を `docs/ideation/customer_insights.md` に保存してください。
+**重要**: 結果を `aidlc-docs/ideation/customer_insights.md` に保存してください。
 ```
 
 ## レビュー・修正フェーズ
@@ -44,7 +44,7 @@
 - [ ] 行動分析は現実的か？抜けている行動はないか？
 - [ ] 課題Top3は本当に重要な課題か？優先順位は適切か？
 
-**必要に応じて `docs/ideation/customer_insights.md` を直接編集してください。**
+**必要に応じて `aidlc-docs/ideation/customer_insights.md` を直接編集してください。**
 
 AIの出力をそのまま受け入れず、自分の頭で考えることが重要です。
 

@@ -81,16 +81,15 @@ Sloth Feed は、**「人をダメにする」を旗印とする動的IP プロ�
 ```
 Sloth-Lab/
 ├── README.md                                  ← このファイル（審査員向け1ページ要約）
-├── docs/
-│   └── ideation/
-│       ├── customer_insights.md              ← ペルソナ詳細
-│       ├── ideas.md                          ← コンセプト発想・競合分析・4差別化軸
-│       └── commercialization.md              ← IP 事業マニフェスト・5レイヤー収益モデル
 ├── mock/
 │   └── index.html                            ← サンドイッチUI ビジュアルモック
 └── aidlc-docs/                               ← AI-DLC 成果物
     ├── aidlc-state.md                        ← フェーズ進行状態（3周分）
     ├── audit.md                              ← 全インタラクション監査ログ
+    ├── ideation/                             ← コアコンセプト文書
+    │   ├── customer_insights.md              ← ペルソナ詳細（マスター）
+    │   ├── ideas.md                          ← コンセプト発想・競合分析・4差別化軸
+    │   └── commercialization.md              ← IP 事業マニフェスト・5レイヤー収益モデル
     └── inception/
         ├── project-overview.md               ← Intent / ビジョン / 5経路 / 4差別化軸
         ├── requirements/
@@ -151,7 +150,7 @@ Sloth-Lab/
 
 | 観点 | 主な根拠 |
 |---|---|
-| **ビジネス意図（Intent）の明確さ** | 上記 Intent 段落 / 5レイヤー収益モデル / [`commercialization.md`](docs/ideation/commercialization.md) |
+| **ビジネス意図（Intent）の明確さ** | 上記 Intent 段落 / 5レイヤー収益モデル / [`commercialization.md`](aidlc-docs/ideation/commercialization.md) |
 | **創造性とテーマ適合性** | 5経路フレーム / 達観した怠惰の老師人格 / サンドイッチUI / 怠惰・善行両受容 / 文化アンカー（Larry Wall・ラッセル・老子・ニュートン・フレミング・ケインズ） |
 | **Unit 分解の適切さ** | 3 ユニット構成 / Unit 2+3 統合経緯の文書内自己完結 / 依存マトリクス / 9 ストーリー全カバー |
 | **ドキュメントの品質** | 3 周分の進化履歴追跡可能 / 内部相互参照 / PR Review 12 項目解消 / Auth.js 移行 10 文書カスケード更新 / Mermaid 可視化 |

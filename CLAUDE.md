@@ -545,7 +545,7 @@ AIモデルは以下に基づいて必要なステージをインテリジェン
 ## ドキュメント構成
 
 - **aidlc-docs/inception/project-overview.md** - プロジェクト概要（ビジョン・コンセプト・コアバリュー・ターゲットユーザー）。Ideation開始前に記入する。
-- **docs/ideation/** - Ideation フェーズの出力（customer_insights.md / ideas.md / commercialization.md）
+- **aidlc-docs/ideation/** - Ideation フェーズの出力（customer_insights.md / ideas.md / commercialization.md）
 - **docs/permanent/** - 永続的ドキュメント（要件定義・機能設計・技術仕様など）
 - **.steering/[YYYYMMDD]-[開発タイトル]/** - 作業単位のステアリングファイル（requirements.md / design.md / tasklist.md）
 

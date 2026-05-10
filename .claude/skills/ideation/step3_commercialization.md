@@ -5,10 +5,10 @@
 
 ## プロンプト
 
-**前提**: Step2で選択した最有望案が記載されている `docs/ideation/ideas.md` を参照してください。
+**前提**: Step2で選択した最有望案が記載されている `aidlc-docs/ideation/ideas.md` を参照してください。
 
 ```
-docs/ideation/ideas.md を参照してください。
+aidlc-docs/ideation/ideas.md を参照してください。
 
 選択したアイディアをビジネスとして成立させるための分析を行います。
 
@@ -48,7 +48,7 @@ docs/ideation/ideas.md を参照してください。
 
 Markdown形式でまとめてください。
 
-**重要**: 結果を `docs/ideation/commercialization.md` に保存してください。このファイルはモック作成時に参照されます。
+**重要**: 結果を `aidlc-docs/ideation/commercialization.md` に保存してください。このファイルはモック作成時に参照されます。
 ```
 
 ## レビュー・修正フェーズ
@@ -61,7 +61,7 @@ Markdown形式でまとめてください。
 - [ ] FAQの回答は納得感があるか？
 - [ ] 独自の強みは明確か？競合と差別化できているか？
 
-**必要に応じて `docs/ideation/commercialization.md` を直接編集してください。**
+**必要に応じて `aidlc-docs/ideation/commercialization.md` を直接編集してください。**
 
 このPR/FAQがモック作成のベースになるので、特に重要です。
 
