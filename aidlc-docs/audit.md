@@ -903,3 +903,45 @@ INCEPTION PHASE（3回目）完了状態：成果物 30 ファイル超 / 履歴
 
 **Context**: Issue #17 US/構成方針整合化完了 → PR #18 に追加コミット
 
+---
+
+## ideation 文書を aidlc-docs/ 配下に移動（Issue #20・審査スコープ整合化）
+**Timestamp**: 2026-05-10T00:00:00Z
+**User Input**: "Q: AI-DLC Workflowはカスタマイズしても良いですか︖ A: はい、カスタマイズは問題ありません。 aidlc-docsの中⾝を⾒て審査します。 この記載があったので、docs/ideationをaidlc-docsの中に入れた方がいいですかね？ リンクは崩れないように他のドキュメントもチェックしておきたい。issueにあげて別ブランチ切って" / "作業開始" / [AskUserQuestion 回答: Skill 定義も同 PR で aidlc-docs/ideation/ に追従修正]
+
+**AI Response**:
+- AI-DLC ハッカソン審査要綱「aidlc-docs の中身を見て審査します」を踏まえ、`docs/ideation/` を `aidlc-docs/ideation/` に移動
+- 事前調査で全 20 箇所の参照を検出（ドキュメント 10 + Skill 定義 10）
+- Issue #20 を作成、ブランチ `relocate-ideation-to-aidlc-docs` を sync-persona-project-overview から派生（PR #18 内容を継承し将来コンフリクト回避）
+
+**実施した作業**：
+
+1. **ファイル移動（git mv）**: 3 ファイル
+   - `docs/ideation/customer_insights.md` → `aidlc-docs/ideation/customer_insights.md`
+   - `docs/ideation/ideas.md` → `aidlc-docs/ideation/ideas.md`
+   - `docs/ideation/commercialization.md` → `aidlc-docs/ideation/commercialization.md`
+   - `docs/ideation/` および `docs/` ディレクトリを削除（空のため）
+
+2. **ドキュメント参照修正（10 箇所）**:
+   - `README.md` L152: `docs/ideation/commercialization.md` → `aidlc-docs/ideation/commercialization.md`
+   - `aidlc-docs/inception/project-overview.md`: 5 箇所（L162, L225, L247-249）の `../../docs/ideation/X` → `../ideation/X` + 表示名も更新
+   - `aidlc-docs/inception/requirements/requirements.md`: 3 箇所（L438-440）の `../../../docs/ideation/X` → `../../ideation/X`
+   - `aidlc-docs/inception/user-stories/personas.md` L5: `../../../docs/ideation/customer_insights.md` → `../../ideation/customer_insights.md` + 表示名も更新
+   - `CLAUDE.md` L548: ドキュメント構成説明の `**docs/ideation/**` → `**aidlc-docs/ideation/**`
+
+3. **Skill 定義修正（10 箇所・案A 採用）**:
+   - `.claude/skills/ideation/step1_customer_insights.md` (2 箇所): 出力先を `aidlc-docs/ideation/customer_insights.md` に
+   - `.claude/skills/ideation/step2_ideation.md` (4 箇所): 入力/出力先を `aidlc-docs/ideation/` に
+   - `.claude/skills/ideation/step3_commercialization.md` (4 箇所): 入力/出力先を `aidlc-docs/ideation/` に
+   - 将来 ideation を再実行する際もマスター = aidlc-docs/ideation/ に統一されるよう設計
+
+**最終確認**：grep で `docs/ideation/`（aidlc-docs/ideation/ 部分一致を除外）の参照がドキュメントに残っていないことを確認
+
+**結果**：
+- AI-DLC 審査スコープ（aidlc-docs/）にコアコンセプト文書（customer_insights / ideas / commercialization）が完全統合
+- マスター文書 customer_insights.md が審査者から見える位置に配置
+- 全 20 箇所のリンク・参照が新パスに整合化
+- Skill 定義も追従済み（将来の ideation 再実行も aidlc-docs/ideation/ 配下に出力）
+
+**Context**: Issue #20 完了 → PR 作成へ
+

@@ -149,7 +149,7 @@ Sloth-Lab/
 
 | 観点 | 主な根拠 |
 |---|---|
-| **ビジネス意図（Intent）の明確さ** | 上記 Intent 段落 / 5レイヤー収益モデル / [`commercialization.md`](docs/ideation/commercialization.md) |
+| **ビジネス意図（Intent）の明確さ** | 上記 Intent 段落 / 5レイヤー収益モデル / [`commercialization.md`](aidlc-docs/ideation/commercialization.md) |
 | **創造性とテーマ適合性** | 5経路フレーム / 達観した怠惰の老師人格 / サンドイッチUI / 怠惰・善行両受容 / 文化アンカー（Larry Wall・ラッセル・老子・ニュートン・フレミング・ケインズ） |
 | **Unit 分解の適切さ** | 3 ユニット構成 / Unit 2+3 統合経緯の文書内自己完結 / 依存マトリクス / 9 ストーリー全カバー |
 | **ドキュメントの品質** | 3 周分の進化履歴追跡可能 / 内部相互参照 / PR Review 12 項目解消 / Auth.js 移行 10 文書カスケード更新 / Mermaid 可視化 |

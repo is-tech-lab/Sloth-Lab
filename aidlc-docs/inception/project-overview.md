@@ -159,7 +159,7 @@ Instagram が「充実した自分」を演じる場所なら、
 
 ## ターゲットユーザー
 
-ペルソナ詳細は [`docs/ideation/customer_insights.md`](../../docs/ideation/customer_insights.md) と [`user-stories/personas.md`](user-stories/personas.md) を参照。
+ペルソナ詳細は [`aidlc-docs/ideation/customer_insights.md`](../ideation/customer_insights.md) と [`user-stories/personas.md`](user-stories/personas.md) を参照。
 
 ### ペルソナA：「罪悪感持ちのだらけ屋」（コアターゲット）
 
@@ -222,7 +222,7 @@ Instagram が「充実した自分」を演じる場所なら、
 | 思想 | 可愛さ・共感のみ | **Larry Wall・ラッセル・老子の系譜** |
 | プラットフォーム | 物販中心 / SNS連携は付随 | **SNSがIPの本体（生成・育成・体験装置）** |
 
-詳細は [`docs/ideation/ideas.md`](../../docs/ideation/ideas.md) §4 参照。
+詳細は [`aidlc-docs/ideation/ideas.md`](../ideation/ideas.md) §4 参照。
 
 ---
 
@@ -244,9 +244,9 @@ Sloth Feed の事業倫理は以下の原則に基づく：
 
 ## 関連ドキュメント
 
-- [Customer Insights](../../docs/ideation/customer_insights.md) — ペルソナの詳細
-- [Ideas](../../docs/ideation/ideas.md) — コンセプト発想と競合分析・差別化軸
-- [Commercialization](../../docs/ideation/commercialization.md) — IP事業としての商業化計画とマニフェスト
+- [Customer Insights](../ideation/customer_insights.md) — ペルソナの詳細
+- [Ideas](../ideation/ideas.md) — コンセプト発想と競合分析・差別化軸
+- [Commercialization](../ideation/commercialization.md) — IP事業としての商業化計画とマニフェスト
 - [Requirements](requirements/requirements.md) — 機能要件・非機能要件
 - [User Stories](user-stories/stories.md) — ユーザーストーリー
 - [Application Design](application-design/application-design.md) — アプリケーション設計

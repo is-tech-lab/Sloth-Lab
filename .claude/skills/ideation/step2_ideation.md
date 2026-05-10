@@ -5,10 +5,10 @@
 
 ## プロンプト
 
-**前提**: Step1で作成した `docs/ideation/customer_insights.md` を参照してください。
+**前提**: Step1で作成した `aidlc-docs/ideation/customer_insights.md` を参照してください。
 
 ```
-docs/ideation/customer_insights.md を参照してください。
+aidlc-docs/ideation/customer_insights.md を参照してください。
 
 先ほど特定した課題を解決するアイディアを発明します。
 
@@ -37,7 +37,7 @@ docs/ideation/customer_insights.md を参照してください。
 
 表形式でまとめてください。
 
-**重要**: 結果を `docs/ideation/ideas.md` に保存してください。
+**重要**: 結果を `aidlc-docs/ideation/ideas.md` に保存してください。
 ```
 
 ## レビュー・修正フェーズ
@@ -49,7 +49,7 @@ docs/ideation/customer_insights.md を参照してください。
 - [ ] 最有望案の選択理由は納得できるか？別の案の方が良くないか？
 - [ ] 技術的に実現可能か？実装難易度の評価は適切か？
 
-**必要に応じて `docs/ideation/ideas.md` を直接編集してください。**
+**必要に応じて `aidlc-docs/ideation/ideas.md` を直接編集してください。**
 
 自分の直感や経験を信じて、AIの提案を批判的に見ることが重要です。
 
