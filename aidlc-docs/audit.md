@@ -945,3 +945,29 @@ INCEPTION PHASE（3回目）完了状態：成果物 30 ファイル超 / 履歴
 
 **Context**: Issue #20 完了 → PR 作成へ
 
+---
+
+## PR #21 再レビュー → 追加見落とし R0/R1 修正
+**Timestamp**: 2026-05-10T00:00:00Z
+**User Input**: "再度レビューして" / "R1 適用して"
+
+**AI Response**:
+- PR #21 の変更を網羅的に再レビュー、2 件の見落としを発見：
+  - **R0**: 移動した 3 ファイル（aidlc-docs/ideation/customer_insights.md / ideas.md / commercialization.md）内の `audit.md` への相対パスが旧位置基準のまま（`../../aidlc-docs/audit.md`）
+  - **R1**: README.md L80-117 のディレクトリ構造ツリーが旧構造（`docs/ideation/` 独立ブロック）のまま
+
+**実施した修正**：
+- **R0 (3 箇所)**: 各 ideation 文書冒頭の `[`../../aidlc-docs/audit.md`](../../aidlc-docs/audit.md)` → `[`../audit.md`](../audit.md)`（新位置 aidlc-docs/ideation/X.md からの相対パス）
+- **R1**: README.md ディレクトリ構造ツリーを書き換え：
+  - `docs/` ブロック削除
+  - `aidlc-docs/` 配下に `ideation/` ブロック追加（aidlc-state.md / audit.md の後・inception/ の前）
+  - customer_insights.md に「（マスター）」注記追加（マスター文書として明示）
+
+**スコープ外と判定（修正不要）**：
+- CLAUDE.md L549, L556, L562 / .claude/commands/init-project.md / new-feature.md の `docs/permanent/` 言及（将来テンプレート用）
+- aidlc-state.md L69-72, L89 / requirement-verification-questions.md L206, L249, L250 等の履歴記述（パス参照ではない）
+
+**結果**：PR #21 のすべてのリンク・参照が新パス整合化完了。README ディレクトリツリーも実態と一致
+
+**Context**: PR #21 再レビュー完了 → 追加コミットへ
+

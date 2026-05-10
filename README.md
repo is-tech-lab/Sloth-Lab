@@ -79,16 +79,15 @@ Sloth Feed は、**「人をダメにする」を旗印とする動的IP プロ�
 ```
 Sloth-Lab/
 ├── README.md                                  ← このファイル（審査員向け1ページ要約）
-├── docs/
-│   └── ideation/
-│       ├── customer_insights.md              ← ペルソナ詳細
-│       ├── ideas.md                          ← コンセプト発想・競合分析・4差別化軸
-│       └── commercialization.md              ← IP 事業マニフェスト・5レイヤー収益モデル
 ├── mock/
 │   └── index.html                            ← サンドイッチUI ビジュアルモック
 └── aidlc-docs/                               ← AI-DLC 成果物
     ├── aidlc-state.md                        ← フェーズ進行状態（3周分）
     ├── audit.md                              ← 全インタラクション監査ログ
+    ├── ideation/                             ← コアコンセプト文書
+    │   ├── customer_insights.md              ← ペルソナ詳細（マスター）
+    │   ├── ideas.md                          ← コンセプト発想・競合分析・4差別化軸
+    │   └── commercialization.md              ← IP 事業マニフェスト・5レイヤー収益モデル
     └── inception/
         ├── project-overview.md               ← Intent / ビジョン / 5経路 / 4差別化軸
         ├── requirements/
