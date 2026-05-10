@@ -1,6 +1,8 @@
 # Sloth Feed — `Sloth-Lab`
 
-> ハッカソンBチーム：神津、蓜島、林、村田
+<p align="center">
+  <img src="sloth-feed-icon.png" alt="Sloth Feed" width="180" />
+</p>
 
 ---
 
